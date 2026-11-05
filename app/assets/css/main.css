@@ -1,0 +1,526 @@
+/**
+ * main.css — ناظم التصميم المركزي لمشروع B-Shop (منقول حرفيًا من ملف التصميم المرجعي).
+ * 1) توكنز التصميم: كل الألوان HSL بصيغة CSS Variables، والمسافات/الأحجام em و rem فقط.
+ * 2) الثيمات: Light (افتراضي) و Dark عبر data-theme على وسم html.
+ * 3) طبقات Tailwind + بديل المتصفح + مكونات ERP الجاهزة (erp-card, erp-input, erp-btn ...).
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =========================================================
+   1. DESIGN TOKENS (HSL/HSLA Only, em/rem Only)
+   ========================================================= */
+:root,
+[data-theme="light"] {
+  --color-bg: hsl(210 35% 96%);
+  --color-bg-f: hsl(215 35% 10%);
+
+  --color-py: hsl(215 85% 48%);
+  --color-py-f: hsl(210 40% 98%);
+  --color-sy: hsl(262 72% 52%);
+  --color-sy-f: hsl(260 40% 98%);
+  --color-at: hsl(188 80% 38%);
+  --color-at-f: hsl(188 40% 98%);
+  --color-md: hsl(215 16% 52%);
+  --color-md-f: hsl(215 25% 32%);
+
+  --color-ok: hsl(152 72% 36%);
+  --color-ok-f: hsl(150 40% 98%);
+  --color-err: hsl(0 76% 50%);
+  --color-err-f: hsl(0 0% 98%);
+  --color-war: hsl(38 92% 48%);
+  --color-war-f: hsl(215 35% 10%);
+  --color-inf: hsl(202 82% 46%);
+  --color-inf-f: hsl(200 40% 98%);
+
+  --color-surface: hsl(0 0% 100%);
+  --color-surface-f: hsl(215 35% 10%);
+  --color-surface-alt: hsl(210 30% 94%);
+  --color-br: hsl(214 22% 83%);
+  --color-br-f: var(--color-py);
+
+  --color-hover: hsla(215 35% 10% / 0.05);
+  --color-active: hsla(215 35% 10% / 0.09);
+  --color-overlay: hsla(215 35% 8% / 0.55);
+  --color-focus-ring: hsla(215 85% 48% / 0.22);
+  --color-glass: hsla(0 0% 100% / 0.82);
+
+  --border-radius-sm: 0.25em;
+  --border-radius: 0.5em;
+  --border-radius-lg: 0.75em;
+  --border-radius-xl: 1em;
+  --border-radius-full: 624.9375em;
+
+  --spacing-xs: 0.25em;
+  --spacing-sm: 0.5em;
+  --spacing-md: 1em;
+  --spacing-lg: 1.5em;
+  --spacing-xl: 2em;
+  --spacing-2xl: 3em;
+
+  --font-family: 'Inter Variable', 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-family-ar: 'Cairo Variable', 'Cairo', 'Segoe UI', 'Tajawal', sans-serif;
+  --font-family-mono: 'JetBrains Mono Variable', 'JetBrains Mono', 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+
+  --font-size-xs: 0.75em;
+  --font-size-sm: 0.875em;
+  --font-size-md: 1em;
+  --font-size-lg: 1.125em;
+  --font-size-xl: 1.25em;
+  --font-size-2xl: 1.5em;
+  --font-size-3xl: 2em;
+
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+
+  --shadow-sm: 0 0.0625em 0.125em hsla(215 35% 10% / 0.08);
+  --shadow-md: 0 0.25em 0.75em hsla(215 35% 10% / 0.1);
+  --shadow-lg: 0 0.5em 1.5em hsla(215 35% 10% / 0.12);
+  --shadow-xl: 0 1em 2.5em hsla(215 35% 10% / 0.14);
+
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+  --transition-slow: 350ms ease;
+
+  --z-base: 0;
+  --z-above: 10;
+  --z-sticky: 100;
+  --z-overlay: 200;
+  --z-modal: 300;
+  --z-toast: 400;
+  --z-tooltip: 500;
+}
+
+[data-theme="dark"],
+.dark {
+  --color-bg: hsl(218 32% 8%);
+  --color-bg-f: hsl(210 30% 94%);
+
+  --color-py: hsl(215 88% 62%);
+  --color-py-f: hsl(218 35% 8%);
+  --color-sy: hsl(262 78% 66%);
+  --color-sy-f: hsl(218 35% 8%);
+  --color-at: hsl(188 80% 52%);
+  --color-at-f: hsl(218 35% 8%);
+  --color-md: hsl(215 16% 42%);
+  --color-md-f: hsl(215 20% 72%);
+
+  --color-ok: hsl(152 68% 46%);
+  --color-ok-f: hsl(218 35% 8%);
+  --color-err: hsl(0 78% 60%);
+  --color-err-f: hsl(0 0% 98%);
+  --color-war: hsl(42 92% 56%);
+  --color-war-f: hsl(218 35% 8%);
+  --color-inf: hsl(202 85% 58%);
+  --color-inf-f: hsl(218 35% 8%);
+
+  --color-surface: hsl(218 28% 12%);
+  --color-surface-f: hsl(210 30% 94%);
+  --color-surface-alt: hsl(218 24% 16%);
+  --color-br: hsl(216 20% 24%);
+  --color-br-f: var(--color-py);
+
+  --color-hover: hsla(210 30% 94% / 0.06);
+  --color-active: hsla(210 30% 94% / 0.12);
+  --color-overlay: hsla(218 35% 4% / 0.72);
+  --color-focus-ring: hsla(215 88% 62% / 0.25);
+  --color-glass: hsla(218 28% 14% / 0.82);
+
+  --shadow-sm: 0 0.0625em 0.125em hsla(0 0% 0% / 0.35);
+  --shadow-md: 0 0.25em 0.75em hsla(0 0% 0% / 0.45);
+  --shadow-lg: 0 0.5em 1.5em hsla(0 0% 0% / 0.55);
+  --shadow-xl: 0 1em 2.5em hsla(0 0% 0% / 0.65);
+}
+
+/* =========================================================
+   2. BROWSER OVERRIDE & RESET
+   ========================================================= */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html[dir="ltr"] {
+  direction: ltr;
+  text-align: left;
+  font-family: var(--font-family);
+}
+
+html[dir="rtl"] {
+  direction: rtl;
+  text-align: right;
+  font-family: var(--font-family-ar);
+}
+
+/* الأيقونات الاتجاهية تتقلب في العربي (زي سهم "التالي") */
+[dir="rtl"] .icon-directional {
+  transform: scaleX(-1);
+}
+
+input,
+button,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: none;
+  outline: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] { -moz-appearance: textfield; }
+
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration {
+  display: none;
+}
+
+input::-ms-reveal,
+input::-ms-clear {
+  display: none !important;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  box-shadow: 0 0 0 62.5em var(--color-surface) inset !important;
+  -webkit-text-fill-color: var(--color-surface-f) !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* حلقة التركيز الموحدة */
+input:focus-visible,
+button:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 0.125em solid var(--color-br-f);
+  outline-offset: 0.125em;
+  box-shadow: 0 0 0 0.2em var(--color-focus-ring);
+}
+
+/* دعم تقليل الحركة لمن يفضّل ذلك */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+}
+
+/* =========================================================
+   3. ERP COMPONENT PRIMITIVES & SKELETON LOADERS
+   ========================================================= */
+body {
+  background-color: var(--color-bg);
+  color: var(--color-bg-f);
+  font-size: 1rem;
+  line-height: var(--line-height-normal);
+  user-select: text;
+}
+
+.titlebar {
+  block-size: 2.5em;
+  -webkit-app-region: drag;
+  user-select: none;
+}
+.titlebar-controls,
+.titlebar-controls *,
+.titlebar-btn {
+  -webkit-app-region: no-drag;
+}
+.titlebar-close-btn:hover {
+  background-color: hsl(0 80% 45%);
+  color: hsl(0 0% 98%);
+}
+[data-theme="dark"] .titlebar-close-btn:hover {
+  background-color: hsl(0 80% 35%);
+  color: hsl(0 0% 98%);
+}
+
+.erp-card {
+  background-color: var(--color-surface);
+  border: 0.0625em solid var(--color-br);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-md);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-fast);
+}
+
+.erp-glass-card {
+  background-color: var(--color-glass);
+  backdrop-filter: blur(0.5em);
+  border: 0.0625em solid var(--color-br);
+  border-radius: var(--border-radius-xl);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-xl);
+}
+
+.erp-section {
+  flex: 1;
+  background-color: var(--color-surface-alt);
+  padding: var(--spacing-md);
+  overflow-y: auto;
+}
+
+.erp-input {
+  background-color: var(--color-surface);
+  border: 0.0625em solid var(--color-br);
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-surface-f);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  inline-size: 100%;
+}
+.erp-input:focus {
+  border-color: var(--color-py);
+  box-shadow: 0 0 0 0.125em var(--color-focus-ring);
+}
+.erp-input[aria-invalid="true"] {
+  border-color: var(--color-err);
+}
+.erp-input[data-valid="true"] {
+  border-color: var(--color-ok);
+}
+.erp-input[readonly] {
+  background-color: var(--color-surface-alt);
+}
+
+/* سهم الـ select الاتجاهي (يتقلب في العربي) */
+select.erp-input {
+  padding-inline-end: 1.75em;
+  background-image: linear-gradient(45deg, transparent 50%, var(--color-md-f) 50%),
+    linear-gradient(135deg, var(--color-md-f) 50%, transparent 50%);
+  background-position: calc(100% - 0.85em) center, calc(100% - 0.5em) center;
+  background-size: 0.35em 0.35em, 0.35em 0.35em;
+  background-repeat: no-repeat;
+}
+html[dir="rtl"] select.erp-input {
+  background-position: 0.5em center, 0.85em center;
+}
+
+/* مربع الاختيار الموحد */
+.erp-checkbox {
+  inline-size: 1.125em;
+  block-size: 1.125em;
+  border: 0.125em solid var(--color-br);
+  border-radius: var(--border-radius-sm);
+  background-color: var(--color-surface);
+  display: inline-grid;
+  place-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all var(--transition-fast);
+}
+.erp-checkbox:checked {
+  background-color: var(--color-py);
+  border-color: var(--color-py);
+}
+.erp-checkbox:checked::before {
+  content: "\2713";
+  color: var(--color-py-f);
+  font-size: 0.75em;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.erp-btn {
+  background-color: var(--color-surface);
+  border: 0.0625em solid var(--color-br);
+  border-radius: var(--border-radius-sm);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-bg-f);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+.erp-btn:hover:not(:disabled) { background-color: var(--color-hover); border-color: var(--color-bg-f); }
+.erp-btn:active:not(:disabled) { transform: translateY(0.0625em); }
+.erp-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.erp-btn-primary { background-color: var(--color-py); border-color: var(--color-py); color: var(--color-py-f); }
+.erp-btn-primary:hover:not(:disabled) { background-color: var(--color-py); border-color: var(--color-py); opacity: 0.9; }
+
+.erp-btn-success { background-color: var(--color-ok); border-color: var(--color-ok); color: var(--color-ok-f); }
+.erp-btn-success:hover:not(:disabled) { background-color: var(--color-ok); border-color: var(--color-ok); opacity: 0.9; }
+
+.erp-btn-warning { background-color: var(--color-war); border-color: var(--color-war); color: var(--color-war-f); }
+.erp-btn-warning:hover:not(:disabled) { background-color: var(--color-war); border-color: var(--color-war); opacity: 0.9; }
+
+.erp-btn-danger { background-color: var(--color-err); border-color: var(--color-err); color: var(--color-err-f); }
+.erp-btn-danger:hover:not(:disabled) { background-color: var(--color-err); border-color: var(--color-err); opacity: 0.9; }
+
+.price-tier-btn {
+  background-color: var(--color-surface-alt);
+  border: 0.0625em solid var(--color-br);
+  padding: 0.125em var(--spacing-sm);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+.price-tier-btn.active {
+  background-color: var(--color-py);
+  color: var(--color-py-f);
+  border-color: var(--color-py);
+}
+
+.erp-badge {
+  padding: 0.125em 0.5em;
+  border-radius: var(--border-radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+/* Skeleton Loader */
+.erp-skeleton {
+  background-color: var(--color-surface-alt);
+  border-radius: var(--border-radius);
+  animation: erpPulse 1.5s ease-in-out infinite;
+}
+@keyframes erpPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* نص متدرج لأكواد الأخطاء 404/500 */
+.gradient-code-text {
+  background: linear-gradient(135deg, var(--color-py), var(--color-sy), var(--color-at));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* أشرطة التمرير المخصصة */
+::-webkit-scrollbar { inline-size: 0.375em; block-size: 0.375em; }
+::-webkit-scrollbar-track { background: var(--color-surface-alt); }
+::-webkit-scrollbar-thumb { background: var(--color-br); border-radius: var(--border-radius-sm); }
+::-webkit-scrollbar-thumb:hover { background: var(--color-md); }
+
+/* جدول تفاصيل الفاتورة المسطّر */
+.invoice-detail-table {
+  inline-size: 100%;
+  border-collapse: collapse;
+  background-color: var(--color-surface);
+}
+.invoice-detail-table th,
+.invoice-detail-table td {
+  border: 0.0625em solid var(--color-br);
+  padding: 0.5em;
+  vertical-align: middle;
+}
+.invoice-detail-table thead th {
+  background-color: var(--color-surface-alt);
+  color: var(--color-surface-f);
+  white-space: nowrap;
+}
+.invoice-detail-table tbody tr:nth-child(even) {
+  background-color: var(--color-surface-alt);
+}
+.invoice-detail-table input {
+  min-inline-size: 3.25em;
+  padding: 0.25em;
+  border: 0.0625em solid var(--color-br);
+  border-radius: var(--border-radius-sm);
+  background-color: var(--color-surface);
+}
+
+/* ورق المعاينة الحرارية للفاتورة */
+.invoice-preview-paper {
+  background: var(--color-surface);
+  color: var(--color-surface-f);
+  box-shadow: var(--shadow-md);
+  font-family: var(--font-family-mono);
+}
+
+/* نافذة المودال */
+.erp-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: var(--color-overlay);
+  backdrop-filter: blur(0.25em);
+  z-index: var(--z-overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-md);
+}
+.erp-modal-dialog {
+  background-color: var(--color-surface);
+  color: var(--color-surface-f);
+  border: 0.0625em solid var(--color-br);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-xl);
+  padding: var(--spacing-lg);
+  inline-size: 90%;
+  max-inline-size: 36em;
+  z-index: var(--z-modal);
+  animation: modalFadeIn 200ms ease-out;
+}
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: translateY(-1em); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* تنسيقات إشعارات vue-sonner لتوافق هوية النظام */
+.sonner-toast {
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+  border: 0.0625em solid var(--color-br) !important;
+  border-radius: var(--border-radius) !important;
+}
+html[dir="rtl"] [data-sonner-toaster] {
+  font-family: var(--font-family-ar);
+}
+
+/* إطار التطبيق الخارجي (App Shell) زي ملف التصميم بالظبط */
+.app-shell-frame {
+  inline-size: 100%;
+  max-inline-size: 100rem;
+  margin-inline: auto;
+  background-color: var(--color-surface);
+  border: 0.0625em solid var(--color-br);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-block-size: 96vh;
+  box-shadow: var(--shadow-xl);
+}
