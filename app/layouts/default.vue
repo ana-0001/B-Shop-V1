@@ -1,5 +1,6 @@
 <!-- layouts/default.vue — شل النظام الرئيسي:
-     شريط التنقل + الإجراءات السريعة + البحث العام + الفرع + التاريخ + قائمة المستخدم -->
+     شريط التنقل + الإجراءات السريعة + البحث العام + الفرع + التاريخ + قائمة المستخدم
+     + شريط الحالة النظامي (SystemStatusBar) في الفوتر أسفل مساحة العمل -->
 <script setup lang="ts">
 import {
   ChartPie as IconChartPie,
@@ -31,6 +32,7 @@ import UserMenu from '@/components/shared/UserMenu.vue'
 import HeldInvoicesDialog from '@/components/shared/HeldInvoicesDialog.vue'
 import ResetDbDialog from '@/components/shared/ResetDbDialog.vue'
 import SyncSkeleton from '@/components/shared/SyncSkeleton.vue'
+import SystemStatusBar from '@/components/system-status-bar/SystemStatusBar.vue'
 
 const { t, locale, setLocale } = useI18n()
 
@@ -226,6 +228,10 @@ onBeforeUnmount(() => window.removeEventListener('keydown', handleKeydown))
     <main v-else class="erp-section space-y-md">
       <slot />
     </main>
+
+    <!-- شريط الحالة النظامي (PRD) — فوتر مساحة العمل: صحة النظام + الإصدار + البيئة
+         + الساعة الحية مع التقويم + الإشعارات + إعدادات النظام -->
+    <SystemStatusBar />
 
     <HeldInvoicesDialog />
     <ResetDbDialog />

@@ -1,6 +1,6 @@
 <!-- system-status-bar/elements/SsbLiveClock.vue — الساعة الحية 12 ساعة مع Tooltip احترافي (PRD).
      Tooltip يعرض: 24 ساعة بتوقيت القاهرة + التاريخ الميلادي + الهجري (أم القرى).
-     بيفتح عند التحويم أو التركيز بلوحة المفاتيح (Popover من reka-ui). -->
+     بيفتح عند التحويم أو التركيز بلوحة المفاتيح (Popover من reka-ui) — لفوق لأن الشريط في الفوتر. -->
 <script setup lang="ts">
 import { PopoverPortal, PopoverContent as RekaPopoverContent, PopoverRoot, PopoverTrigger } from 'reka-ui'
 import { Clock3 as IconClock, MapPin as IconMapPin, CalendarDays as IconCalendar, MoonStar as IconMoonStar } from 'lucide-vue-next'
@@ -52,7 +52,7 @@ function cancelClose(): void {
     <PopoverPortal>
       <RekaPopoverContent
         class="ssb-pop-content"
-        side="bottom"
+        side="top"
         :side-offset="8"
         align="end"
         @mouseenter="cancelClose"

@@ -209,8 +209,6 @@
   "ssb.clock.gregorian": "ميلادي",
   "ssb.clock.hijri": "هجري (أم القرى)",
   "ssb.aria.clock": "الساعة الحية — حوّم لعرض تفاصيل الوقت والتقويم",
-  "ssb.aria.theme": "تبديل الثيم",
-  "ssb.aria.language": "تبديل اللغة",
   "ssb.aria.notifications": "الإشعارات",
   "ssb.aria.settings": "إعدادات النظام",
   "ssb.notif.title": "مركز الإشعارات",

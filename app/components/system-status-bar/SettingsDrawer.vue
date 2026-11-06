@@ -135,8 +135,8 @@ const envLabel = computed(() => (import.meta.dev ? t('ssb.env.dev') : t('ssb.env
           <!-- الفرع الحالي -->
           <section>
             <h3 class="ssb-drawer-section-title">{{ t('ssb.settings.branch') }}</h3>
-            <div class="flex items-center gap-2">
-              <IconBuilding class="w-3.5 h-3.5 text-muted-f" aria-hidden="true" />
+            <div class="flex items-center gap-[0.5em]">
+              <IconBuilding class="w-[0.875em] h-[0.875em] text-muted-f" aria-hidden="true" />
               <Select
                 :model-value="preferences.currentBranchId"
                 :options="branchOptions"
@@ -159,7 +159,7 @@ const envLabel = computed(() => (import.meta.dev ? t('ssb.env.dev') : t('ssb.env
                 <span class="ssb-drawer-info-value">Africa/Cairo</span>
               </div>
             </div>
-            <p class="ssb-drawer-note mt-2">{{ t('ssb.settings.timezoneNote') }}</p>
+            <p class="ssb-drawer-note mt-[0.5em]">{{ t('ssb.settings.timezoneNote') }}</p>
           </section>
 
           <!-- عن النسخة -->

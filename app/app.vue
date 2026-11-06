@@ -1,11 +1,12 @@
 <!-- app/app.vue — الجذر الرئيسي للتطبيق.
      - إطار التطبيق الخارجي (app-shell-frame) زي ملف التصميم بالظبط.
      - مزامنة الثيم (light/dark/system) واللغة (ltr/rtl) مع وسم html.
-     - شريط الحالة النظامي الموحد (SystemStatusBar وفق PRD) + إشعارات Vue Sonner. -->
+     - شريط العنوان العلوي الموحد (AppTitleBar) + إشعارات Vue Sonner.
+     - شريط الحالة النظامي (SystemStatusBar) في الفوتر — جوه شل مساحة العمل فقط. -->
 <script setup lang="ts">
 import { Toaster } from 'vue-sonner'
 import { useI18n } from '@/composables/useI18n'
-import SystemStatusBar from '@/components/system-status-bar/SystemStatusBar.vue'
+import AppTitleBar from '@/components/shared/AppTitleBar.vue'
 
 const preferences = usePreferencesStore()
 const { dir, locale } = useI18n()
@@ -49,7 +50,7 @@ const toastPosition = computed(() => (dir.value === 'rtl' ? 'bottom-left' : 'bot
 <template>
   <div class="min-h-screen bg-bg p-sm flex">
     <div class="app-shell-frame">
-      <SystemStatusBar />
+      <AppTitleBar />
       <NuxtLayout>
         <NuxtPage />
       </NuxtLayout>

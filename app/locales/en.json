@@ -209,8 +209,6 @@
   "ssb.clock.gregorian": "Gregorian",
   "ssb.clock.hijri": "Hijri (Umm al-Qura)",
   "ssb.aria.clock": "Live clock — hover for time & calendar details",
-  "ssb.aria.theme": "Toggle theme",
-  "ssb.aria.language": "Toggle language",
   "ssb.aria.notifications": "Notifications",
   "ssb.aria.settings": "System Settings",
   "ssb.notif.title": "Notifications",

@@ -1,18 +1,33 @@
 /**
  * system-status-bar/status-bar.css — توكنز وتنسيقات شريط الحالة النظامي (SSB).
- * مبني حرفيًا على PRD (07-1-PRD-StatusBar.md):
+ * مبني حرفيًا على PRD (07-1-PRD-StatusBar.md) — كموقع في فوتر مساحة العمل:
  * - ألوان PRD الأصلية: خلفية فاتحة hsl(30 20% 98%) / غامقة hsl(220 15% 12%) + ذهبي hsl(45 85% 62%).
  * - Soft Glass Neumorphism: ظل مزدوج مرفوع + ظل داخلي للضغط + زجاج backdrop-blur.
  * - الخصائص المنطقية فقط (inline-start / inline-end) لضمان انعكاس RTL/LTR بسلاسة.
- * - الارتفاع صارم 1.5em (على خط الجذر 1rem = 1.5rem) والمقاسات em/rem فقط بلا أي px.
+ * - الهندسة النسبية المطلقة (EM-Based Geometry): متغير مرساة واحد --ssb-em هو وحدة القياس،
+ *   وكل أبعاد الشريط ومسافاته وخطوطه وحدوده مشتقة منه بوحدة em فقط (بلا أي px أو rem داخلي)،
+ *   فتغييّر قيمة المرساة واحدة يكبّر أو يصغّر الشريط كله بنسب ثابتة.
+ *   (المحتوى المنقول عبر Portal — Popover/Drawer — بياخد المرساة نفسها لأنه خارج شجرة .ssb).
+ * - كشريط سفلي: الحد والظل في الأعلى، دخول الشريط من تحت لفوق، والقوائم بتفتح لفوق.
  * كل الأصناف معزولة تحت جذر .ssb عشان ما تتعارضش مع هوية النظام العامة.
  */
+
+/* =========================================================
+   0. EM ANCHOR — مرساة الهندسة النسبية المطلقة
+   ========================================================= */
+.ssb,
+.ssb-pop-content,
+.ssb-drawer-content {
+  /* وحدة القياس الوحيدة للشريط — غيّرها ويتقاس الشريط كله نسبةً لها */
+  --ssb-em: 1rem;
+  font-size: var(--ssb-em);
+}
 
 /* =========================================================
    1. DESIGN TOKENS — PRD Literal (Neumorphic Glass)
    ========================================================= */
 .ssb {
-  /* الأبعاد — الارتفاع صارم 1.5em حسب PRD (المكوّن بخط 1rem) */
+  /* الأبعاد — كلها em نسبية لمرساة --ssb-em (الارتفاع 1.5em = سطر ونص) */
   --ssb-height: 1.5em;
   --ssb-r-md: 0.5em;
   --ssb-r-full: 624.9375em;
@@ -46,8 +61,6 @@
     var(--ssb-inset-dark) var(--ssb-neu-depth) var(--ssb-neu-depth) calc(var(--ssb-neu-depth) * 1.5) inset,
     var(--ssb-inset-light) calc(var(--ssb-neu-depth) * -1) calc(var(--ssb-neu-depth) * -1) calc(var(--ssb-neu-depth) * 1.5) inset;
 
-  /* محاولة تطبيق سحب النافذة في Tauri (بديل titlebar القديم) */
-  -webkit-app-region: drag;
   user-select: none;
 }
 
@@ -66,16 +79,8 @@
   --ssb-inset-light: hsla(220 20% 30% / 0.45);
 }
 
-/* أزرار وعناصر تفاعل الشريط ما تتسحبش في Tauri */
-.ssb button,
-.ssb input,
-.ssb a,
-.ssb [role="button"] {
-  -webkit-app-region: no-drag;
-}
-
 /* =========================================================
-   2. BAR SHELL — الزجاج + الارتفاع الصارم + دخول نابض
+   2. BAR SHELL — الزجاج + الارتفاع النسبي + دخول صاعد (فوتر)
    ========================================================= */
 .ssb {
   block-size: var(--ssb-height);
@@ -85,13 +90,13 @@
   justify-content: space-between;
   gap: 0.5em;
   padding-inline: 0.5em;
-  font-size: 1rem;
   color: var(--ssb-fg);
   background-color: var(--ssb-glass-tint);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-block-end: 0.03em solid var(--ssb-br);
-  box-shadow: var(--ssb-shadow-dark) 0 0.1em 0.4em;
+  backdrop-filter: blur(0.75em);
+  -webkit-backdrop-filter: blur(0.75em);
+  /* كشريط سفلي: الفاصل والظل فوق الشريط مش تحته */
+  border-block-start: 0.03em solid var(--ssb-br);
+  box-shadow: var(--ssb-shadow-dark) 0 -0.1em 0.4em;
   overflow: hidden;
   animation: ssbSpringIn 420ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
@@ -99,7 +104,7 @@
 @keyframes ssbSpringIn {
   from {
     opacity: 0;
-    transform: translateY(-1.5em);
+    transform: translateY(1.5em);
   }
   to {
     opacity: 1;
@@ -108,7 +113,29 @@
 }
 
 /* =========================================================
-   3. NEUMORPHIC ICON BUTTON — قاعدة أزرار المنطقة الختامية
+   3. ZONES & SEPARATOR — مناطق الشريط بفواصل نسبية em
+   ========================================================= */
+.ssb-zone {
+  display: flex;
+  align-items: center;
+  min-inline-size: 0;
+}
+.ssb-zone-start {
+  gap: 0.5em;
+}
+.ssb-zone-end {
+  gap: 0.25em;
+}
+.ssb-separator {
+  inline-size: 0.0625em;
+  block-size: 0.75em;
+  background-color: var(--ssb-br);
+  margin-inline: 0.125em;
+  flex-shrink: 0;
+}
+
+/* =========================================================
+   4. NEUMORPHIC ICON BUTTON — قاعدة أزرار المنطقة الختامية
    ========================================================= */
 .ssb-icon-btn {
   position: relative;
@@ -123,7 +150,7 @@
   border: 0.03em solid var(--ssb-br);
   background-color: transparent;
   color: var(--ssb-fg);
-  font-size: 0.6875rem;
+  font-size: 0.6875em;
   font-weight: 600;
   line-height: 1;
   cursor: pointer;
@@ -149,7 +176,8 @@
   flex-shrink: 0;
 }
 
-/* شارة العدّاد فوق زر الإشعارات */
+/* شارة العدّاد فوق زر الإشعارات
+   (calc مع مرساة --ssb-em لأن الأب بخط أصغر فالـ em المباشر هيبوّظ النسبة) */
 .ssb-count-badge {
   position: absolute;
   inset-inline-end: -0.28em;
@@ -163,21 +191,21 @@
   border-radius: var(--ssb-r-full);
   background-color: var(--ssb-offline);
   color: hsl(0 0% 98%);
-  font-size: 0.5625rem;
+  font-size: calc(var(--ssb-em) * 0.5625);
   font-weight: 800;
   line-height: 1;
   box-shadow: 0 0 0 0.11em var(--ssb-bg);
 }
 
 /* =========================================================
-   4. START ZONE — النبضة + شارة الإصدار + وسم البيئة
+   5. START ZONE — النبضة + شارة الإصدار + وسم البيئة
    ========================================================= */
 .ssb-pulse {
   position: relative;
   display: inline-flex;
   align-items: center;
   gap: 0.3em;
-  font-size: 0.6875rem;
+  font-size: 0.6875em;
   font-weight: 700;
   color: var(--ssb-muted);
   white-space: nowrap;
@@ -229,7 +257,7 @@
   border-radius: var(--ssb-r-full);
   background-color: var(--ssb-accent);
   color: var(--ssb-accent-fg);
-  font-size: 0.625rem;
+  font-size: 0.625em;
   font-weight: 800;
   letter-spacing: 0.04em;
   line-height: 1;
@@ -248,7 +276,7 @@
   border-radius: var(--ssb-r-full);
   border: 0.06em dashed var(--ssb-muted);
   color: var(--ssb-muted);
-  font-size: 0.5625rem;
+  font-size: 0.5625em;
   font-weight: 800;
   letter-spacing: 0.08em;
   line-height: 1;
@@ -264,45 +292,7 @@
 }
 
 /* =========================================================
-   5. CENTER ZONE — العلامة التجارية (شعار + اسم + سطر تعريفي)
-   ========================================================= */
-.ssb-brand {
-  position: absolute;
-  inset-inline-start: 50%;
-  transform: translateX(-50%);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4em;
-  color: var(--ssb-fg);
-  text-decoration: none;
-  line-height: 1;
-}
-html[dir="rtl"] .ssb-brand {
-  transform: translateX(50%);
-}
-.ssb-brand-logo {
-  inline-size: 1.15em;
-  block-size: 1.15em;
-  object-fit: contain;
-  border-radius: 0.25em;
-  border: 0.03em solid var(--ssb-br);
-  background-color: hsl(0 0% 100%);
-  padding: 0.06em;
-}
-.ssb-brand-name {
-  font-size: 0.75rem;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-}
-.ssb-brand-tagline {
-  font-size: 0.5625rem;
-  font-weight: 600;
-  color: var(--ssb-muted);
-  white-space: nowrap;
-}
-
-/* =========================================================
-   6. END ZONE — الساعة والتبديلات والإجراءات
+   6. END ZONE — الساعة والإشعارات والإعدادات
    ========================================================= */
 .ssb-clock {
   font-variant-numeric: tabular-nums;
@@ -315,7 +305,7 @@ html[dir="rtl"] .ssb-brand {
 }
 
 /* =========================================================
-   7. CLOCK TOOLTIP POPOVER — بطاقة الوقت والتقويم الاحترافية
+   7. CLOCK TOOLTIP POPOVER — بطاقة الوقت والتقويم (بتفتح لفوق)
    ========================================================= */
 .ssb-pop-content {
   inline-size: 21.5em;
@@ -323,8 +313,8 @@ html[dir="rtl"] .ssb-brand {
   border-radius: var(--ssb-r-md);
   border: 0.03em solid var(--ssb-br);
   background-color: var(--ssb-glass-tint);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(0.75em);
+  -webkit-backdrop-filter: blur(0.75em);
   box-shadow:
     var(--ssb-shadow-dark) 0 0.6em 1.6em,
     var(--ssb-shadow-light) -0.15em -0.15em 0.3em inset;
@@ -332,10 +322,11 @@ html[dir="rtl"] .ssb-brand {
   z-index: var(--z-tooltip, 500);
   animation: ssbPopIn 180ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
+/* البوب تطلع من الشريط لفوق (الفوتر) */
 @keyframes ssbPopIn {
   from {
     opacity: 0;
-    transform: translateY(-0.4em) scale(0.97);
+    transform: translateY(0.4em) scale(0.97);
   }
   to {
     opacity: 1;
@@ -346,7 +337,7 @@ html[dir="rtl"] .ssb-brand {
   display: flex;
   align-items: center;
   gap: 0.4em;
-  font-size: 0.625rem;
+  font-size: 0.625em;
   font-weight: 800;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -366,7 +357,7 @@ html[dir="rtl"] .ssb-brand {
   justify-content: space-between;
   gap: 0.75em;
   padding-block: 0.28em;
-  font-size: 0.6875rem;
+  font-size: 0.6875em;
 }
 .ssb-pop-row + .ssb-pop-row {
   border-block-start: 0.03em dashed var(--ssb-br);
@@ -410,7 +401,7 @@ html[dir="rtl"] .ssb-brand {
   border-block-end: 0.03em solid var(--ssb-br);
 }
 .ssb-notif-head-title {
-  font-size: 0.6875rem;
+  font-size: 0.6875em;
   font-weight: 800;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -424,7 +415,7 @@ html[dir="rtl"] .ssb-brand {
   border: none;
   background: transparent;
   color: var(--ssb-muted);
-  font-size: 0.5625rem;
+  font-size: 0.5625em;
   font-weight: 700;
   cursor: pointer;
   padding-inline: 0.35em;
@@ -435,6 +426,11 @@ html[dir="rtl"] .ssb-brand {
 .ssb-notif-action-btn:hover {
   color: var(--ssb-accent-fg);
   background-color: var(--ssb-accent);
+}
+/* أيقونات إجراءات الترويسة — calc على المرساة (السياق المحلي أصغر) */
+.ssb-notif-action-btn svg {
+  inline-size: calc(var(--ssb-em) * 0.75);
+  block-size: calc(var(--ssb-em) * 0.75);
 }
 .ssb-notif-list {
   flex: 1;
@@ -472,7 +468,7 @@ html[dir="rtl"] .ssb-brand {
   block-size: 1.7em;
   border-radius: var(--ssb-r-md);
   flex-shrink: 0;
-  font-size: 0.6875rem;
+  font-size: 0.6875em;
 }
 .ssb-notif-item-icon[data-kind="held"] {
   background-color: hsla(45 85% 62% / 0.25);
@@ -490,17 +486,22 @@ html[dir="rtl"] .ssb-brand {
   background-color: hsla(220 15% 45% / 0.14);
   color: var(--ssb-muted);
 }
+/* أيقونة نوع الإشعار — calc على المرساة (السياق المحلي أصغر) */
+.ssb-notif-item-icon svg {
+  inline-size: calc(var(--ssb-em) * 0.875);
+  block-size: calc(var(--ssb-em) * 0.875);
+}
 .ssb-notif-item-main {
   flex: 1;
   min-inline-size: 0;
 }
 .ssb-notif-item-title {
-  font-size: 0.6875rem;
+  font-size: 0.6875em;
   font-weight: 800;
   color: var(--ssb-fg);
 }
 .ssb-notif-item-body {
-  font-size: 0.625rem;
+  font-size: 0.625em;
   font-weight: 500;
   color: var(--ssb-muted);
   line-height: 1.45;
@@ -510,7 +511,7 @@ html[dir="rtl"] .ssb-brand {
   -webkit-box-orient: vertical;
 }
 .ssb-notif-item-time {
-  font-size: 0.5625rem;
+  font-size: 0.5625em;
   font-weight: 600;
   color: var(--ssb-muted);
   margin-block-start: 0.2em;
@@ -551,7 +552,7 @@ html[dir="rtl"] .ssb-brand {
   gap: 0.4em;
   padding-block: 1.5em;
   color: var(--ssb-muted);
-  font-size: 0.6875rem;
+  font-size: 0.6875em;
   font-weight: 600;
 }
 .ssb-notif-empty svg {
@@ -603,7 +604,7 @@ html[dir="rtl"] .ssb-brand {
   display: inline-flex;
   align-items: center;
   gap: 0.45em;
-  font-size: 0.875rem;
+  font-size: 0.875em;
   font-weight: 800;
 }
 .ssb-drawer-title svg {
@@ -620,12 +621,12 @@ html[dir="rtl"] .ssb-brand {
 .ssb-drawer-footer {
   padding: 0.75em 1em;
   border-block-start: 0.03em solid var(--ssb-br);
-  font-size: 0.625rem;
+  font-size: 0.625em;
   color: var(--ssb-muted);
   font-weight: 600;
 }
 .ssb-drawer-section-title {
-  font-size: 0.625rem;
+  font-size: 0.625em;
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -648,7 +649,7 @@ html[dir="rtl"] .ssb-brand {
   border: 0.03em solid var(--ssb-br);
   background-color: transparent;
   color: var(--ssb-muted);
-  font-size: 0.6875rem;
+  font-size: 0.6875em;
   font-weight: 700;
   cursor: pointer;
   box-shadow: var(--ssb-neu-raised);
@@ -680,7 +681,7 @@ html[dir="rtl"] .ssb-brand {
   align-items: center;
   justify-content: space-between;
   gap: 0.5em;
-  font-size: 0.6875rem;
+  font-size: 0.6875em;
   padding-block: 0.4em;
 }
 .ssb-drawer-info-row + .ssb-drawer-info-row {
@@ -704,7 +705,7 @@ html[dir="rtl"] .ssb-brand {
   text-align: end;
 }
 .ssb-drawer-note {
-  font-size: 0.5625rem;
+  font-size: 0.5625em;
   color: var(--ssb-muted);
   line-height: 1.5;
   padding: 0.5em;
@@ -716,23 +717,13 @@ html[dir="rtl"] .ssb-brand {
 /* =========================================================
    10. RESPONSIVE — إخفاء تدريجي حسب عرض الشاشة (Mobile-first)
    ========================================================= */
-/* التبويب النصي للغة والثيم يختفي في الشاشات الصغيرة */
+/* نص حالة النظام يختفي في الشاشات المتوسطة والصغيرة (النبضة كافية) */
 @media (max-width: 64em) {
-  .ssb-brand-tagline {
-    display: none;
-  }
   .ssb-pulse-label {
     display: none;
   }
 }
-@media (max-width: 48em) {
-  .ssb-brand {
-    display: none;
-  }
-  .ssb-clock-label {
-    display: none;
-  }
-}
+/* الشارات التفصيلية تختفي على الموبايل الضيق */
 @media (max-width: 30em) {
   .ssb-version-badge,
   .ssb-env-tag {

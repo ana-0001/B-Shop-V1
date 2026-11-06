@@ -1,6 +1,6 @@
 <!-- system-status-bar/elements/SsbNotificationBell.vue — جرس الإشعارات مع Popover (PRD: Notification Popover).
      قائمة إشعارات حية مشتقة من حالة التطبيق (معلّق/مخزون/مزامنة) مع عدّاد غير مقروء،
-     تعليم الكل كمقروء عند الفتح، وحذف فردي + تفريغ كامل. -->
+     تعليم الكل كمقروء عند الفتح، وحذف فردي + تفريغ كامل — القائمة بتفتح لفوق (الفوتر). -->
 <script setup lang="ts">
 import { PopoverPortal, PopoverContent as RekaPopoverContent, PopoverRoot, PopoverTrigger } from 'reka-ui'
 import {
@@ -94,16 +94,16 @@ function handleNotificationClick(notification: SsbNotification): void {
     </PopoverTrigger>
 
     <PopoverPortal>
-      <RekaPopoverContent class="ssb-pop-content ssb-notif-content" side="bottom" :side-offset="8" align="end">
+      <RekaPopoverContent class="ssb-pop-content ssb-notif-content" side="top" :side-offset="8" align="end">
         <!-- ترويسة مركز الإشعارات -->
         <div class="ssb-notif-head">
           <span class="ssb-notif-head-title">{{ t('ssb.notif.title') }}</span>
           <div class="ssb-notif-actions">
             <button type="button" class="ssb-notif-action-btn" :title="t('ssb.notif.markAll')" @click="markAllAsRead">
-              <IconCheckAll class="w-3 h-3" aria-hidden="true" />
+              <IconCheckAll aria-hidden="true" />
             </button>
             <button type="button" class="ssb-notif-action-btn" :title="t('ssb.notif.clearAll')" @click="clearAll">
-              <IconTrash class="w-3 h-3" aria-hidden="true" />
+              <IconTrash aria-hidden="true" />
             </button>
           </div>
         </div>
@@ -121,7 +121,7 @@ function handleNotificationClick(notification: SsbNotification): void {
           >
             <span v-if="!notification.read" class="ssb-notif-unread-dot" aria-hidden="true" />
             <span class="ssb-notif-item-icon" :data-kind="notification.kind" aria-hidden="true">
-              <component :is="kindMeta[notification.kind].icon" class="w-3.5 h-3.5" />
+              <component :is="kindMeta[notification.kind].icon" />
             </span>
             <span class="ssb-notif-item-main">
               <span class="ssb-notif-item-title">{{ t(notification.titleKey) }}</span>

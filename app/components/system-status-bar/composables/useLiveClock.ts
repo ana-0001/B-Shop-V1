@@ -2,6 +2,8 @@
  * system-status-bar/composables/useLiveClock.ts — محرك الساعة الحية للشريط النظامي.
  * وفقًا لـ PRD:
  * - العرض الرئيسي 12 ساعة (hh:mm A) — بأرقام عربية "٠٢:٣٠ م" في الواجهة العربية.
+ * - كل العروض مثبتة على توقيت القاهرة (Africa/Cairo) لدقة البيانات المالية —
+ *   الساعة الرئيسية والتواريخ والـ 24 ساعة نفس المنطقة عشان ما يحصلش تناقض عرض.
  * - Tooltip احترافي عند التحويم يعرض:
  *     1) 24 ساعة بتوقيت القاهرة (Africa/Cairo — hardcoded مؤقتًا حسب خارطة الطريق).
  *     2) التاريخ الميلادي بصيغة "Tuesday : 12 - (05 - May) - 2026 AD".
@@ -35,9 +37,10 @@ function localeTag(locale: LocaleCode): string {
  * بناء سطر التاريخ بصيغة PRD: "Tuesday : 12 - (05 - May) - 2026 AD".
  * بنستخدم formatToParts عشان نركّب الصيغة يدويًا بأسماء الأيام والشهور المحلية.
  */
-function formatPrdDate(date: Date, tag: string, withCalendar?: 'gregory' | 'islamic-umalqura'): string {
+function formatPrdDate(date: Date, tag: string, withCalendar?: 'gregory' | 'islamic-umalqura', timeZone?: string): string {
   const fullTag = withCalendar ? `${tag}-u-ca-${withCalendar}` : tag
   const parts = getFormatter(fullTag, {
+    timeZone,
     weekday: 'long',
     day: '2-digit',
     month: '2-digit',
@@ -49,7 +52,7 @@ function formatPrdDate(date: Date, tag: string, withCalendar?: 'gregory' | 'isla
     parts.find(part => part.type === type)?.value ?? ''
 
   // اسم الشهر الكامل — منسّق منفصل لأن Intl لا يسمح بدمج month: 'long' مع '2-digit'
-  const monthName = getFormatter(fullTag, { month: 'long' }).format(date)
+  const monthName = getFormatter(fullTag, { timeZone, month: 'long' }).format(date)
 
   return `${pick('weekday')} : ${pick('day')} - (${pick('month')} - ${monthName}) - ${pick('year')} ${pick('era')}`
 }
@@ -71,10 +74,11 @@ export function useLiveClock() {
     if (timer) clearInterval(timer)
   })
 
-  /** العرض الرئيسي — 12 ساعة hh:mm A (مثال: 02:30 PM / ٠٢:٣٠ م) */
+  /** العرض الرئيسي — 12 ساعة hh:mm A بتوقيت القاهرة (مثال: 02:30 PM / ٠٢:٣٠ م) */
   const time12 = computed<string>(() => {
     try {
       return getFormatter(localeTag(locale.value), {
+        timeZone: SSB_TIMEZONE,
         hour: '2-digit',
         minute: '2-digit',
         hour12: true,
@@ -99,19 +103,19 @@ export function useLiveClock() {
     }
   })
 
-  /** التاريخ الميلادي بصيغة PRD */
+  /** التاريخ الميلادي بصيغة PRD — بتوقيت القاهرة عشان تاريخ العمليات المالي يتطابق */
   const gregorian = computed<string>(() => {
     try {
-      return formatPrdDate(now.value, localeTag(locale.value))
+      return formatPrdDate(now.value, localeTag(locale.value), undefined, SSB_TIMEZONE)
     } catch {
       return '—'
     }
   })
 
-  /** التاريخ الهجري بتقويم أم القرى (Umm al-Qura) بصيغة PRD */
+  /** التاريخ الهجري بتقويم أم القرى (Umm al-Qura) بصيغة PRD — بتوقيت القاهرة */
   const hijri = computed<string>(() => {
     try {
-      return formatPrdDate(now.value, localeTag(locale.value), 'islamic-umalqura')
+      return formatPrdDate(now.value, localeTag(locale.value), 'islamic-umalqura', SSB_TIMEZONE)
     } catch {
       return '—'
     }

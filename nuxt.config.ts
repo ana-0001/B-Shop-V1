@@ -50,7 +50,7 @@ export default defineNuxtConfig({
       // رابط الـ API الحقيقي (يُستخدم عند التحويل للباك إند — راجع docs/06-backend-migration.md)
       apiBaseUrl: '/api',
       appName: 'B-Shop',
-      appVersion: '1.1.0',
+      appVersion: '1.1.1',
     },
   },
 

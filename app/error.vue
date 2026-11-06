@@ -3,7 +3,7 @@
 <script setup lang="ts">
 import type { NuxtError } from '#app'
 import { useI18n } from '@/composables/useI18n'
-import SystemStatusBar from '@/components/system-status-bar/SystemStatusBar.vue'
+import AppTitleBar from '@/components/shared/AppTitleBar.vue'
 import ErrorState from '@/components/shared/ErrorState.vue'
 
 const props = defineProps<{
@@ -32,7 +32,7 @@ useHead({ title: 'B-Shop — Error' })
 <template>
   <div class="min-h-screen bg-bg p-sm flex">
     <div class="app-shell-frame">
-      <SystemStatusBar />
+      <AppTitleBar />
 
       <main class="flex-1 flex flex-col items-center justify-center p-md bg-surface-alt overflow-y-auto">
         <ErrorState :code="isNotFound ? '404' : '500'" :diagnostic="isNotFound ? '' : diagnostic">
