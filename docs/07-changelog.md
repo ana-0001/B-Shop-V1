@@ -2,6 +2,35 @@
 
 الصيغة مبنية على [Keep a Changelog](https://keepachangelog.com) والإصدارات SemVer.
 
+## [1.1.0] — 2026-11-06
+
+### إضافة — شريط الحالة النظامي الموحد (SystemStatusBar) وفق PRD
+تنفيذ كامل لوثيقة `07-1-PRD-StatusBar.md` بنسخة Vue 3 المكافئة لبيئة المشروع الحالية (قرار صاحب القرار: "التنفيذ بما يتناسب مع بيئة العمل الحالية والمكاتب الحالية")، مع اعتماد **ألوان الـ PRD حرفيًا** (ذهبي `hsl(45 85% 62%)`، خلفية فاتحة `hsl(30 20% 98%)`، غامقة `hsl(220 15% 12%)`) والساعة بصيغة **12 ساعة + Tooltip احترافي** حسب اختيارات صاحب المشروع.
+
+#### وحدة جديدة `app/components/system-status-bar/` (بنيّة PRD الثلاثية)
+- `SystemStatusBar.vue` — نقطة الدخول: ثلاث مناطق بخصائص CSS منطقية (Start/Center/End) لانعكاس RTL/LTR سلس + حركة دخول نابضة (spring cubic-bezier).
+- `zones/` — `SsbStartZone` (نبضة الصحة + شارة الإصدار الذهبية + وسم البيئة) · `SsbCenterZone` (الشعار الرسمي + الاسم + السطر التعريفي) · `SsbEndZone` (الساعة + الثيم + اللغة + الإشعارات + الإعدادات + أزرار النافذة Tauri).
+- `elements/` — `SsbPulseDot` (aria-live="polite") · `SsbVersionBadge` · `SsbEnvTag` (DEV/PROD) · `SsbBrandMark` · `SsbLiveClock` (Popover التحويم) · `SsbNotificationBell` · `SsbThemeToggle` · `SsbLanguageToggle` · `SsbSettingsTrigger`.
+- `composables/` — `useLiveClock` (12h + 24h بتوقيت `Africa/Cairo` + ميلادي + هجري **أم القرى** `islamic-umalqura` بصيغة PRD `Tuesday : 25 - (11 - Dhu al-Qi'dah) - 1447 AH` مع كاش منسّقات Intl) · `useSystemStatus` (online/degraded/offline مشتقة من دورة المزامنة) · `useNotificationCenter` (إشعارات Mock مشتقة: فواتير معلّقة من الـ API + مخزون منخفض من الـ inventory + أحداث sync/db-reset من ناقل الأحداث، مع تعليم كمقروء وحذف وتفريغ وسقف 30 إشعارًا).
+- `SettingsDrawer.vue` — درج جانبي (reka-ui Drawer) بمظهر النيومورفيزم: المظهر (Light/Dark/System) + اللغة + الفرع الحالي + المنطقة والتوقيت (القاهرة مثبتة مع ملاحظة الجاهزية لـ RegionSettings حسب خارطة الطريق) + بطاقة "عن النسخة".
+- `status-bar.css` — توكنز `--ssb-*` معزولة تحت جذر `.ssb`: زجاج `backdrop-blur(12px)` + ظل مزدوج مرفوع + ظل داخلي للضغط + ارتفاع صارم `1.5em` + استجابة تدريجية (إخفاء العلامة/التاجليت حسب العرض) — بدون أي px.
+
+#### قرارات معمارية (بديلة لعناصر PRD غير المتوافقة مع بيئة المشروع)
+| PRD (React) | التنفيذ الفعلي (Vue) |
+| --- | --- |
+| React 19 + Vite 6 | Vue 3 + Nuxt 3 (بيئة المشروع القائمة) |
+| Radix UI | reka-ui (نفس الـ API — Popover + Drawer) |
+| Framer Motion (spring) | CSS keyframes بنفس منحنى الـ spring + `<Transition>` |
+| i18next | `useI18n` المركزي بالمشروع (en/ar + RTL) |
+| CSS Module لكل مكوّن | `status-bar.css` واحد بتوكنز معزولة `--ssb-*` |
+
+#### تغييرات مرتبطة
+- **استبدال `AppTitleBar`**: الشريط الجديد صار شريط الردبس الموحد أعلى `app.vue` و`error.vue` في كل الشاشات (Splash/دخول/مساحة عمل/أخطاء) — مع دمج `WindowControls` (Tauri) داخل منطقة النهاية + مناطق سحب النافذة (`-webkit-app-region`).
+- **حذف شريط الحالة السفلي القديم** (`shared/StatusBar.vue`) — محتواه موزع: صحة/ساعة → الشريط الجديد، المستخدم → قائمة UserMenu، تبويبات مفتوحة → شريط تبويبات الفواتير، نسخة الفِسقال → Tooltip الشارة + درج الإعدادات.
+- **حذف** `LanguageToggle.vue` و`ThemeToggle.vue` القديمين (استُبدلا بنسختي SSB النيومورفيزم بنفس المنطق المركزي).
+- مفاتيح i18n جديدة تحت `ssb.*` (صحة/ساعة/إشعارات/إعدادات/وصولية) في `en.json` و`ar.json` + حذف مفاتيح `status.*` اليتيمة.
+- رفع `appVersion` إلى `1.1.0` في `runtimeConfig`.
+
 ## [1.0.1] — 2026-11-06
 
 ### إصلاح — جولة الاختبار الشامل (تشغيل فعلي + متصفح)

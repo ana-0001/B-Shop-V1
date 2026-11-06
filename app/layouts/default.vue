@@ -28,7 +28,6 @@ import Badge from '@/components/ui/Badge.vue'
 import Select from '@/components/ui/Select.vue'
 import GlobalSearch from '@/components/shared/GlobalSearch.vue'
 import UserMenu from '@/components/shared/UserMenu.vue'
-import StatusBar from '@/components/shared/StatusBar.vue'
 import HeldInvoicesDialog from '@/components/shared/HeldInvoicesDialog.vue'
 import ResetDbDialog from '@/components/shared/ResetDbDialog.vue'
 import SyncSkeleton from '@/components/shared/SyncSkeleton.vue'
@@ -228,7 +227,6 @@ onBeforeUnmount(() => window.removeEventListener('keydown', handleKeydown))
       <slot />
     </main>
 
-    <StatusBar />
     <HeldInvoicesDialog />
     <ResetDbDialog />
   </div>

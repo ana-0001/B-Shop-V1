@@ -1,0 +1,741 @@
+/**
+ * system-status-bar/status-bar.css — توكنز وتنسيقات شريط الحالة النظامي (SSB).
+ * مبني حرفيًا على PRD (07-1-PRD-StatusBar.md):
+ * - ألوان PRD الأصلية: خلفية فاتحة hsl(30 20% 98%) / غامقة hsl(220 15% 12%) + ذهبي hsl(45 85% 62%).
+ * - Soft Glass Neumorphism: ظل مزدوج مرفوع + ظل داخلي للضغط + زجاج backdrop-blur.
+ * - الخصائص المنطقية فقط (inline-start / inline-end) لضمان انعكاس RTL/LTR بسلاسة.
+ * - الارتفاع صارم 1.5em (على خط الجذر 1rem = 1.5rem) والمقاسات em/rem فقط بلا أي px.
+ * كل الأصناف معزولة تحت جذر .ssb عشان ما تتعارضش مع هوية النظام العامة.
+ */
+
+/* =========================================================
+   1. DESIGN TOKENS — PRD Literal (Neumorphic Glass)
+   ========================================================= */
+.ssb {
+  /* الأبعاد — الارتفاع صارم 1.5em حسب PRD (المكوّن بخط 1rem) */
+  --ssb-height: 1.5em;
+  --ssb-r-md: 0.5em;
+  --ssb-r-full: 624.9375em;
+  --ssb-neu-depth: 0.15em;
+
+  /* ألوان PRD الحرفية — الوضع الفاتح */
+  --ssb-bg: hsl(30 20% 98%);
+  --ssb-fg: hsl(220 15% 20%);
+  --ssb-muted: hsl(220 10% 45%);
+  --ssb-accent: hsl(45 85% 62%);
+  --ssb-accent-fg: hsl(45 60% 18%);
+  --ssb-glass-tint: hsla(30 30% 100% / 0.55);
+  --ssb-br: hsla(220 15% 30% / 0.14);
+  --ssb-shadow-dark: hsla(220 25% 18% / 0.22);
+  --ssb-shadow-light: hsla(0 0% 100% / 0.9);
+  --ssb-inset-dark: hsla(220 25% 18% / 0.16);
+  --ssb-inset-light: hsla(0 0% 100% / 0.85);
+
+  /* حالات الصورة (Status) حسب PRD */
+  --ssb-online: hsl(142 71% 42%);
+  --ssb-degraded: hsl(45 93% 47%);
+  --ssb-offline: hsl(0 72% 51%);
+
+  /* عمق النيومورفيزم — ظل مرفوع مزدوج (PRD: Raised) */
+  --ssb-neu-raised:
+    var(--ssb-shadow-dark) 0 0 0 0.03em,
+    var(--ssb-shadow-light) calc(var(--ssb-neu-depth) * -1) calc(var(--ssb-neu-depth) * -1) calc(var(--ssb-neu-depth) * 2) inset,
+    var(--ssb-shadow-dark) var(--ssb-neu-depth) var(--ssb-neu-depth) calc(var(--ssb-neu-depth) * 2);
+  /* حالة الضغط — ظل داخلي (PRD: Pressed) */
+  --ssb-neu-pressed:
+    var(--ssb-inset-dark) var(--ssb-neu-depth) var(--ssb-neu-depth) calc(var(--ssb-neu-depth) * 1.5) inset,
+    var(--ssb-inset-light) calc(var(--ssb-neu-depth) * -1) calc(var(--ssb-neu-depth) * -1) calc(var(--ssb-neu-depth) * 1.5) inset;
+
+  /* محاولة تطبيق سحب النافذة في Tauri (بديل titlebar القديم) */
+  -webkit-app-region: drag;
+  user-select: none;
+}
+
+/* الوضع الغامق — ألوان PRD الحرفية للوضع الداكن (بيتبع ثيم النظام data-theme) */
+[data-theme="dark"] .ssb {
+  --ssb-bg: hsl(220 15% 12%);
+  --ssb-fg: hsl(30 20% 96%);
+  --ssb-muted: hsl(220 10% 62%);
+  --ssb-accent: hsl(45 85% 62%);
+  --ssb-accent-fg: hsl(45 60% 14%);
+  --ssb-glass-tint: hsla(220 18% 16% / 0.55);
+  --ssb-br: hsla(30 20% 90% / 0.12);
+  --ssb-shadow-dark: hsla(0 0% 0% / 0.55);
+  --ssb-shadow-light: hsla(220 20% 30% / 0.5);
+  --ssb-inset-dark: hsla(0 0% 0% / 0.5);
+  --ssb-inset-light: hsla(220 20% 30% / 0.45);
+}
+
+/* أزرار وعناصر تفاعل الشريط ما تتسحبش في Tauri */
+.ssb button,
+.ssb input,
+.ssb a,
+.ssb [role="button"] {
+  -webkit-app-region: no-drag;
+}
+
+/* =========================================================
+   2. BAR SHELL — الزجاج + الارتفاع الصارم + دخول نابض
+   ========================================================= */
+.ssb {
+  block-size: var(--ssb-height);
+  inline-size: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5em;
+  padding-inline: 0.5em;
+  font-size: 1rem;
+  color: var(--ssb-fg);
+  background-color: var(--ssb-glass-tint);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-block-end: 0.03em solid var(--ssb-br);
+  box-shadow: var(--ssb-shadow-dark) 0 0.1em 0.4em;
+  overflow: hidden;
+  animation: ssbSpringIn 420ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes ssbSpringIn {
+  from {
+    opacity: 0;
+    transform: translateY(-1.5em);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =========================================================
+   3. NEUMORPHIC ICON BUTTON — قاعدة أزرار المنطقة الختامية
+   ========================================================= */
+.ssb-icon-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25em;
+  block-size: 1.05em;
+  min-inline-size: 1.05em;
+  padding-inline: 0.3em;
+  border-radius: var(--ssb-r-md);
+  border: 0.03em solid var(--ssb-br);
+  background-color: transparent;
+  color: var(--ssb-fg);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: var(--ssb-neu-raised);
+  transition: box-shadow 150ms ease, transform 150ms ease, background-color 150ms ease;
+  white-space: nowrap;
+}
+.ssb-icon-btn:hover {
+  background-color: var(--ssb-glass-tint);
+  color: var(--ssb-fg);
+}
+.ssb-icon-btn:active {
+  box-shadow: var(--ssb-neu-pressed);
+  transform: translateY(0.02em);
+}
+.ssb-icon-btn:focus-visible {
+  outline: 0.09em solid var(--ssb-accent);
+  outline-offset: 0.09em;
+}
+.ssb-icon-btn svg {
+  inline-size: 0.85em;
+  block-size: 0.85em;
+  flex-shrink: 0;
+}
+
+/* شارة العدّاد فوق زر الإشعارات */
+.ssb-count-badge {
+  position: absolute;
+  inset-inline-end: -0.28em;
+  inset-block-start: -0.28em;
+  min-inline-size: 0.95em;
+  block-size: 0.95em;
+  padding-inline: 0.2em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--ssb-r-full);
+  background-color: var(--ssb-offline);
+  color: hsl(0 0% 98%);
+  font-size: 0.5625rem;
+  font-weight: 800;
+  line-height: 1;
+  box-shadow: 0 0 0 0.11em var(--ssb-bg);
+}
+
+/* =========================================================
+   4. START ZONE — النبضة + شارة الإصدار + وسم البيئة
+   ========================================================= */
+.ssb-pulse {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--ssb-muted);
+  white-space: nowrap;
+}
+.ssb-pulse-dot {
+  position: relative;
+  inline-size: 0.55em;
+  block-size: 0.55em;
+  border-radius: var(--ssb-r-full);
+  background-color: var(--ssb-online);
+  box-shadow: 0 0 0.4em var(--ssb-online);
+}
+/* نبضة الانتشار — aria-live على الحاوية في المكوّن */
+.ssb-pulse-dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--ssb-r-full);
+  background-color: inherit;
+  animation: ssbPing 1.6s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+.ssb[data-health="degraded"] .ssb-pulse-dot {
+  background-color: var(--ssb-degraded);
+  box-shadow: 0 0 0.4em var(--ssb-degraded);
+}
+.ssb[data-health="offline"] .ssb-pulse-dot {
+  background-color: var(--ssb-offline);
+  box-shadow: 0 0 0.4em var(--ssb-offline);
+}
+@keyframes ssbPing {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  75%,
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+/* شارة الإصدار الذهبية (PRD: Version Badge) */
+.ssb-version-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25em;
+  padding-inline: 0.5em;
+  block-size: 1em;
+  border-radius: var(--ssb-r-full);
+  background-color: var(--ssb-accent);
+  color: var(--ssb-accent-fg);
+  font-size: 0.625rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  box-shadow: var(--ssb-neu-raised);
+  white-space: nowrap;
+  cursor: default;
+}
+
+/* وسم البيئة DEV/PROD (PRD: Environment Tag) */
+.ssb-env-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25em;
+  padding-inline: 0.45em;
+  block-size: 1em;
+  border-radius: var(--ssb-r-full);
+  border: 0.06em dashed var(--ssb-muted);
+  color: var(--ssb-muted);
+  font-size: 0.5625rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  white-space: nowrap;
+}
+.ssb-env-tag[data-env="dev"] {
+  border-color: var(--ssb-degraded);
+  color: var(--ssb-degraded);
+}
+.ssb-env-tag[data-env="prod"] {
+  border-color: var(--ssb-online);
+  color: var(--ssb-online);
+}
+
+/* =========================================================
+   5. CENTER ZONE — العلامة التجارية (شعار + اسم + سطر تعريفي)
+   ========================================================= */
+.ssb-brand {
+  position: absolute;
+  inset-inline-start: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  color: var(--ssb-fg);
+  text-decoration: none;
+  line-height: 1;
+}
+html[dir="rtl"] .ssb-brand {
+  transform: translateX(50%);
+}
+.ssb-brand-logo {
+  inline-size: 1.15em;
+  block-size: 1.15em;
+  object-fit: contain;
+  border-radius: 0.25em;
+  border: 0.03em solid var(--ssb-br);
+  background-color: hsl(0 0% 100%);
+  padding: 0.06em;
+}
+.ssb-brand-name {
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+.ssb-brand-tagline {
+  font-size: 0.5625rem;
+  font-weight: 600;
+  color: var(--ssb-muted);
+  white-space: nowrap;
+}
+
+/* =========================================================
+   6. END ZONE — الساعة والتبديلات والإجراءات
+   ========================================================= */
+.ssb-clock {
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-family-mono);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.ssb-clock svg {
+  color: var(--ssb-accent);
+}
+
+/* =========================================================
+   7. CLOCK TOOLTIP POPOVER — بطاقة الوقت والتقويم الاحترافية
+   ========================================================= */
+.ssb-pop-content {
+  inline-size: 21.5em;
+  padding: 0.75em;
+  border-radius: var(--ssb-r-md);
+  border: 0.03em solid var(--ssb-br);
+  background-color: var(--ssb-glass-tint);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow:
+    var(--ssb-shadow-dark) 0 0.6em 1.6em,
+    var(--ssb-shadow-light) -0.15em -0.15em 0.3em inset;
+  color: var(--ssb-fg);
+  z-index: var(--z-tooltip, 500);
+  animation: ssbPopIn 180ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes ssbPopIn {
+  from {
+    opacity: 0;
+    transform: translateY(-0.4em) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.ssb-pop-title {
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+  font-size: 0.625rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ssb-muted);
+  padding-block-end: 0.5em;
+  border-block-end: 0.03em solid var(--ssb-br);
+  margin-block-end: 0.5em;
+}
+.ssb-pop-title svg {
+  inline-size: 0.8em;
+  block-size: 0.8em;
+  color: var(--ssb-accent);
+}
+.ssb-pop-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75em;
+  padding-block: 0.28em;
+  font-size: 0.6875rem;
+}
+.ssb-pop-row + .ssb-pop-row {
+  border-block-start: 0.03em dashed var(--ssb-br);
+}
+.ssb-pop-row-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  color: var(--ssb-muted);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.ssb-pop-row-label svg {
+  inline-size: 0.75em;
+  block-size: 0.75em;
+  flex-shrink: 0;
+}
+.ssb-pop-row-value {
+  font-family: var(--font-family-mono);
+  font-weight: 700;
+  text-align: end;
+  /* كشف تلقائي للاتجاه: التواريخ العربية RTL والإنجليزية LTR بلا كسر */
+  unicode-bidi: plaintext;
+}
+
+/* =========================================================
+   8. NOTIFICATIONS POPOVER — مركز الإشعارات
+   ========================================================= */
+.ssb-notif-content {
+  inline-size: 21em;
+  max-block-size: 26em;
+  display: flex;
+  flex-direction: column;
+}
+.ssb-notif-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5em;
+  padding-block-end: 0.5em;
+  border-block-end: 0.03em solid var(--ssb-br);
+}
+.ssb-notif-head-title {
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ssb-fg);
+}
+.ssb-notif-actions {
+  display: inline-flex;
+  gap: 0.3em;
+}
+.ssb-notif-action-btn {
+  border: none;
+  background: transparent;
+  color: var(--ssb-muted);
+  font-size: 0.5625rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding-inline: 0.35em;
+  block-size: 1.4em;
+  border-radius: 0.25em;
+  transition: color 150ms ease, background-color 150ms ease;
+}
+.ssb-notif-action-btn:hover {
+  color: var(--ssb-accent-fg);
+  background-color: var(--ssb-accent);
+}
+.ssb-notif-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35em;
+  padding-block-start: 0.5em;
+}
+.ssb-notif-item {
+  position: relative;
+  display: flex;
+  gap: 0.5em;
+  padding: 0.5em;
+  border-radius: var(--ssb-r-md);
+  border: 0.03em solid var(--ssb-br);
+  background-color: var(--ssb-glass-tint);
+  cursor: pointer;
+  transition: box-shadow 150ms ease, transform 150ms ease;
+  text-align: start;
+  inline-size: 100%;
+}
+.ssb-notif-item:hover {
+  box-shadow: var(--ssb-neu-raised);
+  transform: translateY(-0.05em);
+}
+.ssb-notif-item[data-read="true"] {
+  opacity: 0.62;
+}
+.ssb-notif-item-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 1.7em;
+  block-size: 1.7em;
+  border-radius: var(--ssb-r-md);
+  flex-shrink: 0;
+  font-size: 0.6875rem;
+}
+.ssb-notif-item-icon[data-kind="held"] {
+  background-color: hsla(45 85% 62% / 0.25);
+  color: var(--ssb-accent-fg);
+}
+.ssb-notif-item-icon[data-kind="stock"] {
+  background-color: hsla(0 72% 51% / 0.14);
+  color: var(--ssb-offline);
+}
+.ssb-notif-item-icon[data-kind="sync"] {
+  background-color: hsla(142 71% 42% / 0.14);
+  color: var(--ssb-online);
+}
+.ssb-notif-item-icon[data-kind="system"] {
+  background-color: hsla(220 15% 45% / 0.14);
+  color: var(--ssb-muted);
+}
+.ssb-notif-item-main {
+  flex: 1;
+  min-inline-size: 0;
+}
+.ssb-notif-item-title {
+  font-size: 0.6875rem;
+  font-weight: 800;
+  color: var(--ssb-fg);
+}
+.ssb-notif-item-body {
+  font-size: 0.625rem;
+  font-weight: 500;
+  color: var(--ssb-muted);
+  line-height: 1.45;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.ssb-notif-item-time {
+  font-size: 0.5625rem;
+  font-weight: 600;
+  color: var(--ssb-muted);
+  margin-block-start: 0.2em;
+  font-variant-numeric: tabular-nums;
+}
+.ssb-notif-item-dismiss {
+  position: absolute;
+  inset-inline-end: 0.3em;
+  inset-block-start: 0.3em;
+  inline-size: 1.1em;
+  block-size: 1.1em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--ssb-r-full);
+  background: transparent;
+  color: var(--ssb-muted);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 150ms ease, background-color 150ms ease;
+}
+.ssb-notif-item:hover .ssb-notif-item-dismiss {
+  opacity: 1;
+}
+.ssb-notif-item-dismiss:hover {
+  background-color: hsla(0 72% 51% / 0.14);
+  color: var(--ssb-offline);
+}
+.ssb-notif-item-dismiss svg {
+  inline-size: 0.7em;
+  block-size: 0.7em;
+}
+.ssb-notif-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4em;
+  padding-block: 1.5em;
+  color: var(--ssb-muted);
+  font-size: 0.6875rem;
+  font-weight: 600;
+}
+.ssb-notif-empty svg {
+  inline-size: 1.4em;
+  block-size: 1.4em;
+  opacity: 0.5;
+}
+/* النقطة البرتقالية للإشعار غير المقروء */
+.ssb-notif-unread-dot {
+  position: absolute;
+  inset-inline-start: -0.16em;
+  inset-block-start: -0.16em;
+  inline-size: 0.5em;
+  block-size: 0.5em;
+  border-radius: var(--ssb-r-full);
+  background-color: var(--ssb-accent);
+  box-shadow: 0 0 0 0.14em var(--ssb-bg);
+}
+
+/* =========================================================
+   9. SETTINGS DRAWER — درج الإعدادات الجانبي
+   ========================================================= */
+.ssb-drawer-content {
+  position: fixed;
+  inset-block: 0;
+  inset-inline-end: 0;
+  z-index: var(--z-modal, 300);
+  inline-size: min(24em, 92vw);
+  display: flex;
+  flex-direction: column;
+  background-color: var(--ssb-bg);
+  color: var(--ssb-fg);
+  border-inline-start: 0.03em solid var(--ssb-br);
+  box-shadow: var(--ssb-shadow-dark) -0.6em 0 2em;
+  outline: none;
+}
+[data-theme="dark"] .ssb-drawer-content {
+  background-color: var(--ssb-bg);
+}
+.ssb-drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5em;
+  padding: 1em;
+  border-block-end: 0.03em solid var(--ssb-br);
+}
+.ssb-drawer-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  font-size: 0.875rem;
+  font-weight: 800;
+}
+.ssb-drawer-title svg {
+  color: var(--ssb-accent);
+}
+.ssb-drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1em;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25em;
+}
+.ssb-drawer-footer {
+  padding: 0.75em 1em;
+  border-block-start: 0.03em solid var(--ssb-br);
+  font-size: 0.625rem;
+  color: var(--ssb-muted);
+  font-weight: 600;
+}
+.ssb-drawer-section-title {
+  font-size: 0.625rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ssb-muted);
+  margin-block-end: 0.55em;
+}
+.ssb-option-row {
+  display: flex;
+  gap: 0.4em;
+  flex-wrap: wrap;
+}
+.ssb-option-chip {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35em;
+  padding-block: 0.55em;
+  border-radius: var(--ssb-r-md);
+  border: 0.03em solid var(--ssb-br);
+  background-color: transparent;
+  color: var(--ssb-muted);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: var(--ssb-neu-raised);
+  transition: all 150ms ease;
+  white-space: nowrap;
+}
+.ssb-option-chip:hover {
+  color: var(--ssb-fg);
+}
+.ssb-option-chip:active {
+  box-shadow: var(--ssb-neu-pressed);
+}
+.ssb-option-chip[data-active="true"] {
+  background-color: var(--ssb-accent);
+  border-color: var(--ssb-accent);
+  color: var(--ssb-accent-fg);
+}
+.ssb-option-chip svg {
+  inline-size: 0.85em;
+  block-size: 0.85em;
+}
+.ssb-drawer-info-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45em;
+}
+.ssb-drawer-info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5em;
+  font-size: 0.6875rem;
+  padding-block: 0.4em;
+}
+.ssb-drawer-info-row + .ssb-drawer-info-row {
+  border-block-start: 0.03em dashed var(--ssb-br);
+}
+.ssb-drawer-info-label {
+  color: var(--ssb-muted);
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+}
+.ssb-drawer-info-label svg {
+  inline-size: 0.75em;
+  block-size: 0.75em;
+}
+.ssb-drawer-info-value {
+  font-weight: 700;
+  font-family: var(--font-family-mono);
+  unicode-bidi: plaintext;
+  text-align: end;
+}
+.ssb-drawer-note {
+  font-size: 0.5625rem;
+  color: var(--ssb-muted);
+  line-height: 1.5;
+  padding: 0.5em;
+  border-radius: var(--ssb-r-md);
+  background-color: hsla(45 85% 62% / 0.12);
+  border: 0.03em dashed hsla(45 85% 62% / 0.5);
+}
+
+/* =========================================================
+   10. RESPONSIVE — إخفاء تدريجي حسب عرض الشاشة (Mobile-first)
+   ========================================================= */
+/* التبويب النصي للغة والثيم يختفي في الشاشات الصغيرة */
+@media (max-width: 64em) {
+  .ssb-brand-tagline {
+    display: none;
+  }
+  .ssb-pulse-label {
+    display: none;
+  }
+}
+@media (max-width: 48em) {
+  .ssb-brand {
+    display: none;
+  }
+  .ssb-clock-label {
+    display: none;
+  }
+}
+@media (max-width: 30em) {
+  .ssb-version-badge,
+  .ssb-env-tag {
+    display: none;
+  }
+}
