@@ -88,7 +88,7 @@ const branchName = computed(() => {
 
 .print-invoice {
   padding: 2rem;
-  color: hsl(215 35% 15%);
+  color: hsl(220 15% 15%);
   font-family: 'Cairo Variable', 'Cairo', 'Inter Variable', 'Inter', sans-serif;
 }
 
@@ -98,11 +98,11 @@ const branchName = computed(() => {
   align-items: flex-start;
   gap: 1rem;
   padding-block-end: 1rem;
-  border-block-end: 0.1875rem solid hsl(215 85% 48%);
+  border-block-end: 0.1875rem solid hsl(45 85% 45%);
 }
 
 .print-brand {
-  color: hsl(215 85% 48%);
+  color: hsl(45 70% 32%);
   font-size: 1.5rem;
   font-weight: 800;
 }
@@ -129,14 +129,14 @@ const branchName = computed(() => {
 
 .print-table th,
 .print-table td {
-  border: 0.0625rem solid hsl(214 22% 75%);
+  border: 0.0625rem solid hsl(220 15% 75%);
   padding: 0.65rem 0.5rem;
   text-align: center;
 }
 
 .print-table th {
-  color: hsl(215 65% 28%);
-  background: hsl(210 40% 96%);
+  color: hsl(220 15% 28%);
+  background: hsl(30 20% 96%);
 }
 
 .print-table td.print-item-name {
@@ -153,14 +153,14 @@ const branchName = computed(() => {
   display: flex;
   justify-content: space-between;
   padding: 0.45rem 0.6rem;
-  border-block-end: 0.0625rem solid hsl(214 22% 83%);
+  border-block-end: 0.0625rem solid hsl(220 15% 83%);
 }
 
 .print-summary .print-net {
-  color: hsl(152 72% 28%);
-  background: hsl(150 50% 96%);
+  color: hsl(142 71% 24%);
+  background: hsl(142 50% 96%);
   font-size: 1.1rem;
   font-weight: 800;
-  border: 0.125rem solid hsl(152 60% 65%);
+  border: 0.125rem solid hsl(142 60% 65%);
 }
 </style>

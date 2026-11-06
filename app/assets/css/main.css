@@ -1,8 +1,13 @@
 /**
- * main.css — ناظم التصميم المركزي لمشروع B-Shop (منقول حرفيًا من ملف التصميم المرجعي).
+ * main.css — ناظم التصميم المركزي لمشروع B-Shop.
  * 1) توكنز التصميم: كل الألوان HSL بصيغة CSS Variables، والمسافات/الأحجام em و rem فقط.
  * 2) الثيمات: Light (افتراضي) و Dark عبر data-theme على وسم html.
  * 3) طبقات Tailwind + بديل المتصفح + مكونات ERP الجاهزة (erp-card, erp-input, erp-btn ...).
+ *
+ * ⭐ لوحة الألوان موحّدة مع خطة شريط الحالة (07-1-PRD-StatusBar.md) بقرار صاحب المشروع:
+ *    ذهبي hsl(45 85% 62%) · خلفية فاتحة hsl(30 20% 98%) · غامقة hsl(220 15% 12%)
+ *    · أخضر hsl(142 71% 42%) · أصفر hsl(45 93% 47%) · أحمر hsl(0 72% 51%).
+ *    كل تدرجات المشروع مشتقة من عائلات الصبغة دي بس (30 دافئة / 220 كحلية / 45 ذهبية / 142 خضراء / 0 حمراء).
  */
 
 @tailwind base;
@@ -14,38 +19,42 @@
    ========================================================= */
 :root,
 [data-theme="light"] {
-  --color-bg: hsl(210 35% 96%);
-  --color-bg-f: hsl(215 35% 10%);
+  /* الخلفية الدافئة (PRD Light Background حرفيًا) ونص كحلي من عائلة صبغة الخلفية الغامقة */
+  --color-bg: hsl(30 20% 98%);
+  --color-bg-f: hsl(220 15% 20%);
 
-  --color-py: hsl(215 85% 48%);
-  --color-py-f: hsl(210 40% 98%);
-  --color-sy: hsl(262 72% 52%);
-  --color-sy-f: hsl(260 40% 98%);
-  --color-at: hsl(188 80% 38%);
-  --color-at-f: hsl(188 40% 98%);
-  --color-md: hsl(215 16% 52%);
-  --color-md-f: hsl(215 25% 32%);
+  /* الهوية: ذهبي PRD (Accent) — الثانوي كحلي بنفس عائلة 220 — البديل ذهبي عتيق أغمق */
+  --color-py: hsl(45 85% 62%);
+  --color-py-f: hsl(45 60% 18%);
+  --color-sy: hsl(220 15% 25%);
+  --color-sy-f: hsl(30 20% 98%);
+  --color-at: hsl(45 70% 42%);
+  --color-at-f: hsl(45 60% 18%);
+  --color-md: hsl(220 10% 45%);
+  --color-md-f: hsl(220 15% 30%);
 
-  --color-ok: hsl(152 72% 36%);
-  --color-ok-f: hsl(150 40% 98%);
-  --color-err: hsl(0 76% 50%);
+  /* حالات النظام بألوان PRD الحرفية (Online/Degraded/Offline) + معلومات كحلية بنفس عائلة 220 */
+  --color-ok: hsl(142 71% 42%);
+  --color-ok-f: hsl(0 0% 98%);
+  --color-err: hsl(0 72% 51%);
   --color-err-f: hsl(0 0% 98%);
-  --color-war: hsl(38 92% 48%);
-  --color-war-f: hsl(215 35% 10%);
-  --color-inf: hsl(202 82% 46%);
-  --color-inf-f: hsl(200 40% 98%);
+  --color-war: hsl(45 93% 47%);
+  --color-war-f: hsl(45 60% 15%);
+  --color-inf: hsl(220 60% 45%);
+  --color-inf-f: hsl(0 0% 98%);
 
-  --color-surface: hsl(0 0% 100%);
-  --color-surface-f: hsl(215 35% 10%);
-  --color-surface-alt: hsl(210 30% 94%);
-  --color-br: hsl(214 22% 83%);
+  /* أسطح ورقية دافئة وحدود كحلية خافتة (عائلة SSB) */
+  --color-surface: hsl(30 30% 99%);
+  --color-surface-f: hsl(220 15% 20%);
+  --color-surface-alt: hsl(30 20% 94%);
+  --color-br: hsl(220 15% 85%);
   --color-br-f: var(--color-py);
 
-  --color-hover: hsla(215 35% 10% / 0.05);
-  --color-active: hsla(215 35% 10% / 0.09);
-  --color-overlay: hsla(215 35% 8% / 0.55);
-  --color-focus-ring: hsla(215 85% 48% / 0.22);
-  --color-glass: hsla(0 0% 100% / 0.82);
+  --color-hover: hsla(220 15% 20% / 0.05);
+  --color-active: hsla(220 15% 20% / 0.09);
+  --color-overlay: hsla(220 15% 8% / 0.55);
+  --color-focus-ring: hsla(45 85% 62% / 0.3);
+  --color-glass: hsla(30 30% 100% / 0.82);
 
   --border-radius-sm: 0.25em;
   --border-radius: 0.5em;
@@ -81,10 +90,10 @@
   --line-height-normal: 1.5;
   --line-height-relaxed: 1.75;
 
-  --shadow-sm: 0 0.0625em 0.125em hsla(215 35% 10% / 0.08);
-  --shadow-md: 0 0.25em 0.75em hsla(215 35% 10% / 0.1);
-  --shadow-lg: 0 0.5em 1.5em hsla(215 35% 10% / 0.12);
-  --shadow-xl: 0 1em 2.5em hsla(215 35% 10% / 0.14);
+  --shadow-sm: 0 0.0625em 0.125em hsla(220 20% 12% / 0.08);
+  --shadow-md: 0 0.25em 0.75em hsla(220 20% 12% / 0.1);
+  --shadow-lg: 0 0.5em 1.5em hsla(220 20% 12% / 0.12);
+  --shadow-xl: 0 1em 2.5em hsla(220 20% 12% / 0.14);
 
   --transition-fast: 150ms ease;
   --transition-normal: 250ms ease;
@@ -101,38 +110,42 @@
 
 [data-theme="dark"],
 .dark {
-  --color-bg: hsl(218 32% 8%);
-  --color-bg-f: hsl(210 30% 94%);
+  /* الخلفية الكحلية (PRD Dark Background حرفيًا) ونص دافئ فاتح زي شريط الحالة */
+  --color-bg: hsl(220 15% 12%);
+  --color-bg-f: hsl(30 20% 96%);
 
-  --color-py: hsl(215 88% 62%);
-  --color-py-f: hsl(218 35% 8%);
-  --color-sy: hsl(262 78% 66%);
-  --color-sy-f: hsl(218 35% 8%);
-  --color-at: hsl(188 80% 52%);
-  --color-at-f: hsl(218 35% 8%);
-  --color-md: hsl(215 16% 42%);
-  --color-md-f: hsl(215 20% 72%);
+  /* الهوية بالغامق: نفس الذهبي PRD — الثانوي كحلي أفتح — البديل ذهبي عتيق أسطع للقراءة */
+  --color-py: hsl(45 85% 62%);
+  --color-py-f: hsl(45 60% 14%);
+  --color-sy: hsl(220 15% 38%);
+  --color-sy-f: hsl(30 20% 96%);
+  --color-at: hsl(45 80% 55%);
+  --color-at-f: hsl(45 60% 14%);
+  --color-md: hsl(220 10% 62%);
+  --color-md-f: hsl(220 12% 75%);
 
-  --color-ok: hsl(152 68% 46%);
-  --color-ok-f: hsl(218 35% 8%);
-  --color-err: hsl(0 78% 60%);
+  /* حالات النظام بألوان PRD الحرفية + معلومات كحلية أسطع */
+  --color-ok: hsl(142 71% 42%);
+  --color-ok-f: hsl(220 15% 10%);
+  --color-err: hsl(0 72% 51%);
   --color-err-f: hsl(0 0% 98%);
-  --color-war: hsl(42 92% 56%);
-  --color-war-f: hsl(218 35% 8%);
-  --color-inf: hsl(202 85% 58%);
-  --color-inf-f: hsl(218 35% 8%);
+  --color-war: hsl(45 93% 47%);
+  --color-war-f: hsl(220 15% 10%);
+  --color-inf: hsl(220 70% 62%);
+  --color-inf-f: hsl(220 15% 10%);
 
-  --color-surface: hsl(218 28% 12%);
-  --color-surface-f: hsl(210 30% 94%);
-  --color-surface-alt: hsl(218 24% 16%);
-  --color-br: hsl(216 20% 24%);
+  /* أسطح كحلية متدرجة من الخلفية PRD وحدود بنفس العائلة */
+  --color-surface: hsl(220 15% 16%);
+  --color-surface-f: hsl(30 20% 96%);
+  --color-surface-alt: hsl(220 15% 18%);
+  --color-br: hsl(220 15% 24%);
   --color-br-f: var(--color-py);
 
-  --color-hover: hsla(210 30% 94% / 0.06);
-  --color-active: hsla(210 30% 94% / 0.12);
-  --color-overlay: hsla(218 35% 4% / 0.72);
-  --color-focus-ring: hsla(215 88% 62% / 0.25);
-  --color-glass: hsla(218 28% 14% / 0.82);
+  --color-hover: hsla(30 20% 96% / 0.06);
+  --color-active: hsla(30 20% 96% / 0.12);
+  --color-overlay: hsla(220 15% 5% / 0.72);
+  --color-focus-ring: hsla(45 85% 62% / 0.35);
+  --color-glass: hsla(220 18% 16% / 0.82);
 
   --shadow-sm: 0 0.0625em 0.125em hsla(0 0% 0% / 0.35);
   --shadow-md: 0 0.25em 0.75em hsla(0 0% 0% / 0.45);
@@ -254,11 +267,11 @@ body {
   -webkit-app-region: no-drag;
 }
 .titlebar-close-btn:hover {
-  background-color: hsl(0 80% 45%);
+  background-color: hsl(0 72% 45%);
   color: hsl(0 0% 98%);
 }
 [data-theme="dark"] .titlebar-close-btn:hover {
-  background-color: hsl(0 80% 35%);
+  background-color: hsl(0 72% 38%);
   color: hsl(0 0% 98%);
 }
 

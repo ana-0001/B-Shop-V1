@@ -238,6 +238,8 @@
   "ssb.settings.version": "Version",
   "ssb.settings.environment": "Environment",
   "ssb.settings.fiscal": "Fiscal Build",
+  "ssb.user.aria": "Current user",
+  "ssb.tabs": "Open Tabs",
   "err404.code": "404",
   "err404.title": "Destination Route Not Found",
   "err404.desc": "The requested screen or resource does not exist in B-Shop ERP. Choose a destination below to resume work.",

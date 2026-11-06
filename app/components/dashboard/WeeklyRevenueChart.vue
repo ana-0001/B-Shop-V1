@@ -22,15 +22,15 @@ const { t } = useI18n()
 
 const resolvedTheme = useState<'light' | 'dark'>('bshop:resolvedTheme', () => 'light')
 
-/** ألوان الشارت من توكنز النظام — محسومة لكل ثيم لتفادي قراءات DOM متكررة */
+/** ألوان الشارت من لوحة PRD الموحّدة (ذهبي/أخضر + محايدات كحلية) — محسومة لكل ثيم لتفادي قراءات DOM متكررة */
 const chartPalette = computed(() => {
   const dark = resolvedTheme.value === 'dark'
   return {
-    primary: dark ? 'hsl(215 88% 62%)' : 'hsl(215 85% 48%)',
-    primaryFill: dark ? 'hsla(215 88% 62% / 0.16)' : 'hsla(215 85% 48% / 0.14)',
-    ok: dark ? 'hsl(152 68% 46%)' : 'hsl(152 72% 36%)',
-    grid: dark ? 'hsla(216 20% 24% / 0.9)' : 'hsla(214 22% 83% / 0.8)',
-    tick: dark ? 'hsl(215 20% 72%)' : 'hsl(215 25% 32%)',
+    primary: dark ? 'hsl(45 85% 62%)' : 'hsl(45 85% 48%)',
+    primaryFill: dark ? 'hsla(45 85% 62% / 0.16)' : 'hsla(45 85% 48% / 0.14)',
+    ok: dark ? 'hsl(142 71% 46%)' : 'hsl(142 71% 38%)',
+    grid: dark ? 'hsla(220 15% 24% / 0.9)' : 'hsla(220 15% 83% / 0.8)',
+    tick: dark ? 'hsl(220 10% 62%)' : 'hsl(220 15% 30%)',
   }
 })
 

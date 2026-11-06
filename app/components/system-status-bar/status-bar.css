@@ -291,8 +291,60 @@
   color: var(--ssb-online);
 }
 
+/* ---------------------------------------------------------
+   رقاقات الفوتر القديم المنقولة — المستخدم + التبويبات المفتوحة
+   (عرض فقط، بنفس نَفَس النيومورفيزم الهادئ — كل الأبعاد em)
+   --------------------------------------------------------- */
+.ssb-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  font-size: 0.6875em;
+  font-weight: 600;
+  color: var(--ssb-muted);
+  white-space: nowrap;
+  cursor: default;
+}
+.ssb-chip svg {
+  inline-size: 0.8em;
+  block-size: 0.8em;
+  flex-shrink: 0;
+  color: var(--ssb-accent);
+}
+.ssb-user-name {
+  color: var(--ssb-fg);
+  font-weight: 700;
+}
+/* عدّاد التبويبات — أرقام جدولية بخط mono زي الساعة */
+.ssb-tabs-count {
+  color: var(--ssb-fg);
+  font-weight: 700;
+  font-family: var(--font-family-mono);
+  font-variant-numeric: tabular-nums;
+}
+/* شارة "منشئ النظام" المصغّرة — نفس ذهبي شارة الإصدار (الخط نسبي لسياق الرقاقة) */
+.ssb-system-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25em;
+  padding-inline: 0.4em;
+  block-size: 1.15em;
+  border-radius: var(--ssb-r-full);
+  background-color: var(--ssb-accent);
+  color: var(--ssb-accent-fg);
+  font-size: 0.82em;
+  font-weight: 800;
+  line-height: 1;
+  box-shadow: var(--ssb-neu-raised);
+  white-space: nowrap;
+}
+.ssb-system-badge svg {
+  inline-size: 0.85em;
+  block-size: 0.85em;
+}
+
 /* =========================================================
-   6. END ZONE — الساعة والإشعارات والإعدادات
+   6. END ZONE — الساعة ونسخة الفِسقال والإشعارات والإعدادات
    ========================================================= */
 .ssb-clock {
   font-variant-numeric: tabular-nums;
@@ -302,6 +354,17 @@
 }
 .ssb-clock svg {
   color: var(--ssb-accent);
+}
+/* وسم نسخة الفِسقال — منقول من الفوتر القديم (كان جنب الساعة) بخط mono خافت.
+   السلسلة مختلطة (EGP + ج.م) فبنستخدم كشف اتجاه تلقائي زي بقية القيم. */
+.ssb-fiscal-tag {
+  font-family: var(--font-family-mono);
+  font-size: 0.625em;
+  font-weight: 600;
+  color: var(--ssb-muted);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  unicode-bidi: plaintext;
 }
 
 /* =========================================================
@@ -717,16 +780,24 @@
 /* =========================================================
    10. RESPONSIVE — إخفاء تدريجي حسب عرض الشاشة (Mobile-first)
    ========================================================= */
-/* نص حالة النظام يختفي في الشاشات المتوسطة والصغيرة (النبضة كافية) */
+/* نص حالة النظام ونسخة الفِسقال يختفوا في الشاشات المتوسطة والصغيرة */
 @media (max-width: 64em) {
-  .ssb-pulse-label {
+  .ssb-pulse-label,
+  .ssb-fiscal-tag {
     display: none;
   }
 }
-/* الشارات التفصيلية تختفي على الموبايل الضيق */
+/* رقاقة التبويبات تختفي على الشاشات الضيقة — المستخدم يفضل ظاهر */
+@media (max-width: 48em) {
+  .ssb-tabs-chip {
+    display: none;
+  }
+}
+/* الشارات التفصيلية ورقاقة المستخدم تختفي على الموبايل الضيق جدًا */
 @media (max-width: 30em) {
   .ssb-version-badge,
-  .ssb-env-tag {
+  .ssb-env-tag,
+  .ssb-user-chip {
     display: none;
   }
 }
