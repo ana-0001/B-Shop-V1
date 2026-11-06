@@ -58,6 +58,14 @@ export default defineNuxtConfig({
     port: 3000,
   },
 
+  // السماح بالوصول لسيرفر التطوير عبر أي دومين (روابط المعاينة/البروكسي)
+  // Vite بيمنع الـ hosts غير المعرّفة افتراضيًا، فبنسمح بالكل في بيئة التطوير فقط
+  vite: {
+    server: {
+      allowedHosts: true,
+    },
+  },
+
   app: {
     head: {
       htmlAttrs: { lang: 'en', dir: 'ltr' },
