@@ -23,7 +23,7 @@ import EmptyState from '@/components/shared/EmptyState.vue'
 const props = withDefaults(
   defineProps<{
     data: TData[]
-    columns: ColumnDef<TData, any>[]
+    columns: ColumnDef<TData, unknown>[]
     globalFilter?: string
   }>(),
   { globalFilter: '' },

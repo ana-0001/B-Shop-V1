@@ -16,7 +16,9 @@ interface AuthResponse {
   user: SessionUser
   accessToken: string      // في الـ Mock: 'mock-token-bomba'
   termsAccepted: boolean
+  termsAcceptedAt?: string | null   // تاريخ القبول UTC (من حالة المستخدم المخزنة)
   onboardingCompleted: boolean
+  operatorProfile?: { jobTitle: string; avatarIcon: string }
 }
 interface SessionUser {
   id: string; username: string; displayName: string
@@ -26,10 +28,22 @@ interface SessionUser {
 ```
 - **خطأ:** `401 { code: 'INVALID_CREDENTIALS', message, messageAr }` — لمعرّف غير موجود أو كلمة مرور غلط.
 - الـ Mock بيدور في `db.users` بمطابقة username أو أي email أو أي phone (بتطبيع +20) — وكلمة المرور بمقارنة نصية مع `SEED_CREDENTIALS` (bcrypt في الباك إند).
+- بوابات الشروط/الإعداد بتقرأ من حالة المستخدم المخزنة (`db.userStates[userId]`) — فمش بتتكرر بعد تسجيل خروج ودخول تاني.
 
 ### `POST /auth/logout`
 
 - **Response:** `204` — الـ Mock بينام 120ms ويرجّع.
+
+### `POST /auth/accept-terms` — قبول الشروط (يُخزَّن على المستخدم)
+
+- **Request:** `{ userId: string }`
+- **Response 200:** `{ termsAcceptedAt: string }` — توقيت UTC.
+- الباك إند الحقيقي يسجّلها على مستوى المستخدم في قاعدة البيانات (مرة واحدة لكل مستخدم).
+
+### `POST /auth/onboarding` — حفظ الإعداد الأولي وإنهاء البوابة
+
+- **Request:** `{ userId: string; profile: { jobTitle: string; avatarIcon: string } }`
+- **Response 200:** `{ onboardingCompleted: true }`
 
 ## الفواتير
 

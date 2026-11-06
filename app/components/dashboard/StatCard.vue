@@ -1,12 +1,14 @@
 <!-- components/dashboard/StatCard.vue — بطاقة إحصائية للوحة التحكم (أيقونة + قيمة + وصف) -->
 <script setup lang="ts">
+import type { Component } from 'vue'
 import { cn } from '@/utils/cn'
 
 const props = defineProps<{
   title: string
   value: string
   sub?: string
-  icon: object
+  /** أيقونة lucide-vue-next — Functional Component فعلاً مش object عادي */
+  icon: Component
   iconClass?: string
   class?: string
 }>()

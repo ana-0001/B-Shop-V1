@@ -31,8 +31,9 @@ const clauses = computed(() =>
 )
 
 /** قبول الشروط والتوجيه حسب بوابات الـ Onboarding */
-function acceptTerms(): void {
-  auth.acceptTerms()
+async function acceptTerms(): Promise<void> {
+  // انتظار الحفظ في الـ API الأول — عشان بوابات الـ middleware تتقرر على حالة سليمة
+  await auth.acceptTerms()
   toast.success(t('notif.termsAccepted'))
   router.push(resolvePostAuthRoute(false, auth.needsOnboarding))
 }

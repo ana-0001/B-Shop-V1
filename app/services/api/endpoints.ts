@@ -32,6 +32,18 @@ export const authApi = {
     }
     await realRequest<null>('/auth/logout', { method: 'POST' })
   },
+
+  /** POST /auth/accept-terms — قبول الشروط (بيتخزن على المستخدم في الباك إند) */
+  acceptTerms(userId: string): Promise<{ termsAcceptedAt: string }> {
+    if (isMockEnabled()) return mock.mockAcceptTerms(userId)
+    return realRequest<{ termsAcceptedAt: string }>('/auth/accept-terms', { method: 'POST', body: { userId } })
+  },
+
+  /** POST /auth/onboarding — حفظ الإعداد الأولي وإنهاء البوابة */
+  completeOnboarding(userId: string, profile: { jobTitle: string; avatarIcon: string }): Promise<{ onboardingCompleted: boolean }> {
+    if (isMockEnabled()) return mock.mockCompleteOnboarding(userId, profile)
+    return realRequest<{ onboardingCompleted: boolean }>('/auth/onboarding', { method: 'POST', body: { userId, profile } })
+  },
 }
 
 /* ================= Invoices ================= */

@@ -62,7 +62,11 @@ export interface AuthResponse {
   accessToken: string
   /** فلاجللي واجهة تعرف توجّه المستخدم للشروط أو الإعداد الأولي */
   termsAccepted: boolean
+  /** تاريخ قبول الشروط (UTC) — بيرجع من الباك إند مع حالة المستخدم */
+  termsAcceptedAt?: string | null
   onboardingCompleted: boolean
+  /** بيانات الملف الوظيفي المحفوظة من الإعداد الأولي (اختياري للتوافق الرجعي) */
+  operatorProfile?: { jobTitle: string; avatarIcon: string }
 }
 
 /* ============ كيانات النظام التجارية ============ */

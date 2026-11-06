@@ -182,6 +182,13 @@ export const useInvoicesStore = defineStore(
       if (tab.items.length === 0) return false
       await invoicesApi.hold(tab)
       tabs.value = tabs.value.filter(entry => entry.id !== id)
+      // لو آخر تبويب — بنجهز مسودة جديدة فاضية (نفس سلوك غلق آخر تبويب)
+      if (tabs.value.length === 0) {
+        activeTabId.value = null
+        secondaryTabId.value = null
+        await createTab(tab.type)
+        return true
+      }
       if (activeTabId.value === id) activeTabId.value = tabs.value[0]?.id ?? null
       if (secondaryTabId.value === id) secondaryTabId.value = null
       return true
@@ -194,6 +201,14 @@ export const useInvoicesStore = defineStore(
       if (tab.items.length === 0) return false
       await invoicesApi.post(tab)
       tabs.value = tabs.value.filter(entry => entry.id !== id)
+      // لو آخر تبويب — بنجهز مسودة جديدة فاضية (نفس سلوك غلق آخر تبويب)
+      // عشان مساحة العمل تفضل جاهزة للكاشير بعد كل عملية بيع
+      if (tabs.value.length === 0) {
+        activeTabId.value = null
+        secondaryTabId.value = null
+        await createTab(tab.type)
+        return true
+      }
       if (activeTabId.value === id) activeTabId.value = tabs.value[0]?.id ?? null
       if (secondaryTabId.value === id) secondaryTabId.value = null
       return true

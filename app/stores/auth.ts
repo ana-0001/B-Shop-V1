@@ -41,6 +41,10 @@ export const useAuthStore = defineStore(
     async function signIn(identifier: string, password: string): Promise<AuthResponse> {
       const response = await authApi.signIn({ identifier, password })
       user.value = response.user
+      // حالة البوابات بتقرأ من استجابة الـ API (زي الباك إند الحقيقي)
+      termsAcceptedAt.value = response.termsAccepted ? (response.termsAcceptedAt ?? nowUtcIso()) : null
+      onboardingCompleted.value = response.onboardingCompleted
+      if (response.operatorProfile) operatorProfile.value = response.operatorProfile
       return response
     }
 
@@ -56,13 +60,21 @@ export const useAuthStore = defineStore(
       }
     }
 
-    /** قبول الشروط والأحكام — بيسجل التوقيت UTC */
-    function acceptTerms(): void {
-      termsAcceptedAt.value = nowUtcIso()
+    /** قبول الشروط والأحكام — بيتخزن على المستخدم في الـ API وبيسجل التوقيت UTC */
+    async function acceptTerms(): Promise<void> {
+      if (user.value) {
+        const res = await authApi.acceptTerms(user.value.id)
+        termsAcceptedAt.value = res.termsAcceptedAt
+      } else {
+        termsAcceptedAt.value = nowUtcIso()
+      }
     }
 
-    /** حفظ بيانات الإعداد الأولي وإنهاء الـ Onboarding */
-    function completeOnboarding(profile: OperatorProfile): void {
+    /** حفظ بيانات الإعداد الأولي وإنهاء الـ Onboarding — بيتخزن على المستخدم في الـ API */
+    async function completeOnboarding(profile: OperatorProfile): Promise<void> {
+      if (user.value) {
+        await authApi.completeOnboarding(user.value.id, profile)
+      }
       operatorProfile.value = profile
       onboardingCompleted.value = true
     }

@@ -2,6 +2,16 @@
 
 الصيغة مبنية على [Keep a Changelog](https://keepachangelog.com) والإصدارات SemVer.
 
+## [1.0.1] — 2026-11-06
+
+### إصلاح — جولة الاختبار الشامل (تشغيل فعلي + متصفح)
+- **الأصناف كأنواع ضمنية**: إضافة `vue` كاعتماد مباشر في `package.json` — توليد إعلانات الـ auto-imports كان يشير لـ `vue/index` (غير قابل للتحليل مع `moduleResolution: Bundler`) فكانت كل الدوال المُستوردة تلقائيًا بترجع `any` في `nuxt typecheck` (22 خطأ TS7006/TS7053).
+- **تعليق/ترحيل الفواتير**: `DataCloneError` في `structuredClone` مع الـ reactive Proxies بتاعة Pinia — استُبدل بنسخ JSON آمنة (`deepCloneInvoice`) في `handlers.ts`.
+- **تعليق مساحة العمل بعد آخر تبويب**: بعد Hold أو Save & Print لآخر تبويب كانت الشاشة تعلق في الـ Skeleton — الآن `holdTab` و`postTab` بيهيّئوا مسودة جديدة فورًا (نفس سلوك غلق آخر تبويب).
+- **بوابات الشروط/الإعداد بعد الخروج**: `mockSignIn` كان يرجع دائمًا `termsAccepted: false` فكان المستخدم يعيد القمع بعد كل خروج — أُضيف `userStates` لكل مستخدم في قاعدة الـ Mock + endpoints: `POST /auth/accept-terms` و `POST /auth/onboarding` (يحاكي تخزين الباك إند الحقيقي) — الموثقة في `02-api-contract.md`.
+- **تحذير prop الأيقونة**: `StatCard.icon` كان `object` والأيقونات Functional Components — صار `Component` من Vue.
+- **اعتماديات بيئة التطوير**: تثبيت `@vue/devtools-api` (استيراد اختياري في vee-validate كان يكسر الـ Vite Dev Overlay).
+
 ## [1.0.0] — 2026-11-05
 
 ### إضافة — المرحلة 0: التهيئة

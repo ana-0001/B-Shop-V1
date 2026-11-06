@@ -33,12 +33,17 @@ const isLastStep = computed(() => currentStep.value === TOTAL_STEPS)
 function nextStep(): void {
   // آخر خطوة: حفظ الإعدادات وفتح النظام الرئيسي
   if (isLastStep.value) {
-    auth.completeOnboarding({ jobTitle: jobTitle.value.trim(), avatarIcon: avatarIcon.value })
-    toast.success(t('notif.onboardingDone'))
-    router.push(ROUTE_NAMES.dashboard)
+    void finishOnboarding()
     return
   }
   currentStep.value = Math.min(TOTAL_STEPS, currentStep.value + 1)
+}
+
+/** حفظ الإعداد في الـ API أولًا ثم فتح لوحة التحكم */
+async function finishOnboarding(): Promise<void> {
+  await auth.completeOnboarding({ jobTitle: jobTitle.value.trim(), avatarIcon: avatarIcon.value })
+  toast.success(t('notif.onboardingDone'))
+  router.push(ROUTE_NAMES.dashboard)
 }
 
 function previousStep(): void {

@@ -26,6 +26,8 @@ export interface MockDatabase {
     nextInvoiceNumber: number
   }
   users: User[]
+  /** حالة كل مستخدم (الشروط + الإعداد الأولي) — زي ما الباك إند بيخزنها على حساب المستخدم */
+  userStates: Record<string, UserSystemState>
   companies: Company[]
   branches: Branch[]
   categories: Category[]
@@ -35,10 +37,18 @@ export interface MockDatabase {
   invoices: Invoice[]
 }
 
+/** حالة المستخدم داخل النظام (بوابات الشروط والإعداد) */
+export interface UserSystemState {
+  termsAcceptedAt: string | null
+  onboardingCompleted: boolean
+  operatorProfile: { jobTitle: string; avatarIcon: string }
+}
+
 let cachedDb: MockDatabase | null = null
 
 /** بناء قاعدة بيانات جديدة من الـ Seed من الصفر */
 export function buildSeedDatabase(): MockDatabase {
+  const seed = seedUser
   return {
     meta: {
       currency: 'EGP',
@@ -46,7 +56,8 @@ export function buildSeedDatabase(): MockDatabase {
       operationDate: todayIsoDate(),
       nextInvoiceNumber: SEED_START_INVOICE_NUMBER,
     },
-    users: [seedUser],
+    users: [seed],
+    userStates: {},
     companies: [seedCompany],
     branches: seedBranches,
     categories: seedCategories,
@@ -66,6 +77,8 @@ export function loadMockDatabase(): MockDatabase {
       if (raw) {
         const parsed = JSON.parse(raw) as MockDatabase
         if (parsed?.products?.length && parsed?.invoices && parsed?.meta) {
+          // ترقية قواعد بيانات الجلسات القديمة — ضمان وجود userStates
+          if (!parsed.userStates) parsed.userStates = {}
           cachedDb = parsed
           return cachedDb
         }

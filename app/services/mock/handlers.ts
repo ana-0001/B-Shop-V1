@@ -20,6 +20,7 @@ import { computeInvoiceAmounts } from '@/utils/invoice'
 import { addDaysIso, nowUtcIso, todayIsoDate, formatDayLabel } from '@/utils/dates'
 import { DEFAULT_TAX_RATE, LOW_STOCK_THRESHOLD } from '@/utils/constants'
 import { loadMockDatabase, mockLatency, saveMockDatabase } from '@/services/mock/db'
+import type { UserSystemState } from '@/services/mock/db'
 import { SEED_CREDENTIALS } from '@/services/mock/seed'
 
 /** توحيد صيغة الهاتف المصري للمقارنة (بيشيل +20 والمسافات) */
@@ -56,6 +57,11 @@ export function toSessionUser(user: User): SessionUser {
   }
 }
 
+/** قراءة حالة المستخدم في النظام (افتراضي: لسه ما قبلش الشروط) */
+function getUserSystemState(db: ReturnType<typeof loadMockDatabase>, userId: string): UserSystemState {
+  return db.userStates[userId] ?? { termsAcceptedAt: null, onboardingCompleted: false, operatorProfile: { jobTitle: '', avatarIcon: 'user-cog' } }
+}
+
 /* ============ المصادقة ============ */
 
 /** POST /auth/login — تسجيل الدخول بالمعرّف الموحد */
@@ -70,17 +76,44 @@ export async function mockSignIn(identifier: string, password: string): Promise<
       messageAr: 'المعرّف أو كلمة المرور غير صحيحة.',
     })
   }
+  // حالة المستخدم بتقرأ من قاعدة الـ Mock — فبوابات الشروط والإعداد مش بتتكرر بعد الخروج
+  const state = getUserSystemState(loadMockDatabase(), user.id)
   return {
     user: toSessionUser(user),
     accessToken: 'mock-token-bomba',
-    termsAccepted: false,
-    onboardingCompleted: false,
+    termsAccepted: !!state.termsAcceptedAt,
+    termsAcceptedAt: state.termsAcceptedAt,
+    onboardingCompleted: state.onboardingCompleted,
+    operatorProfile: state.operatorProfile,
   }
 }
 
 /** POST /auth/logout — تسجيل الخروج (Mock) */
 export async function mockSignOut(): Promise<void> {
   await mockLatency(120)
+}
+
+/** POST /auth/accept-terms — قبول الشروط (بيتخزن على المستخدم في قاعدة الـ Mock) */
+export async function mockAcceptTerms(userId: string): Promise<{ termsAcceptedAt: string }> {
+  await mockLatency(120)
+  const db = loadMockDatabase()
+  const state = getUserSystemState(db, userId)
+  state.termsAcceptedAt = nowUtcIso()
+  db.userStates[userId] = state
+  saveMockDatabase(db)
+  return { termsAcceptedAt: state.termsAcceptedAt }
+}
+
+/** POST /auth/onboarding — حفظ الإعداد الأولي وإنهاء البوابة */
+export async function mockCompleteOnboarding(userId: string, profile: { jobTitle: string; avatarIcon: string }): Promise<{ onboardingCompleted: boolean }> {
+  await mockLatency(160)
+  const db = loadMockDatabase()
+  const state = getUserSystemState(db, userId)
+  state.onboardingCompleted = true
+  state.operatorProfile = { jobTitle: profile.jobTitle, avatarIcon: profile.avatarIcon }
+  db.userStates[userId] = state
+  saveMockDatabase(db)
+  return { onboardingCompleted: true }
 }
 
 /* ============ الفواتير ============ */
@@ -99,7 +132,7 @@ export async function mockNextInvoiceId(): Promise<string> {
 export async function mockHoldInvoice(invoice: Invoice): Promise<Invoice> {
   await mockLatency(200)
   const db = loadMockDatabase()
-  const held: Invoice = { ...structuredClone(toRawInvoice(invoice)), status: 'HELD', heldAt: nowUtcIso(), updatedAt: nowUtcIso() }
+  const held: Invoice = { ...deepCloneInvoice(invoice), status: 'HELD', heldAt: nowUtcIso(), updatedAt: nowUtcIso() }
   const existingIndex = db.invoices.findIndex(entry => entry.id === held.id)
   if (existingIndex >= 0) db.invoices[existingIndex] = held
   else db.invoices.push(held)
@@ -111,7 +144,7 @@ export async function mockHoldInvoice(invoice: Invoice): Promise<Invoice> {
 export async function mockPostInvoice(invoice: Invoice): Promise<Invoice> {
   await mockLatency(240)
   const db = loadMockDatabase()
-  const posted: Invoice = { ...structuredClone(toRawInvoice(invoice)), status: 'POSTED', postedAt: nowUtcIso(), updatedAt: nowUtcIso() }
+  const posted: Invoice = { ...deepCloneInvoice(invoice), status: 'POSTED', postedAt: nowUtcIso(), updatedAt: nowUtcIso() }
   const existingIndex = db.invoices.findIndex(entry => entry.id === posted.id)
   if (existingIndex >= 0) db.invoices[existingIndex] = posted
   else db.invoices.unshift(posted)
@@ -151,6 +184,15 @@ export async function mockDeleteHeld(id: string): Promise<boolean> {
 function toRawInvoice(draft: Invoice): Invoice {
   const { customerTab: _customerTab, sideTab: _sideTab, ...raw } = draft as Invoice & Record<string, unknown>
   return raw as Invoice
+}
+
+/**
+ * نسخ عميق آمن لفاتورة قادمة من متجر Pinia:
+ * structuredClone بيفشل (DataCloneError) مع الـ reactive Proxies بتاعة Vue،
+ * فبنستخدم JSON clone اللي بيرجع كائنات عادية قابلة للتخزين والمقارنة.
+ */
+function deepCloneInvoice(draft: Invoice): Invoice {
+  return JSON.parse(JSON.stringify(toRawInvoice(draft))) as Invoice
 }
 
 /* ============ الشاشات المجمعة ============ */

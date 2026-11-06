@@ -78,17 +78,17 @@ const branchOptions = computed(() => [
 ])
 
 /** أعمدة جدول TanStack — قابلة للفرز مع تنسيق مالي وعربي حسب اللغة */
-const columns = computed<ColumnDef<InventoryRow, any>[]>(() => [
+const columns = computed<ColumnDef<InventoryRow, unknown>[]>(() => [
   {
     accessorKey: 'barcode',
     header: () => t('inv.barcode'),
-    cell: info => h('span', { class: 'font-mono font-semibold' }, info.getValue()),
+    cell: info => h('span', { class: 'font-mono font-semibold' }, String(info.getValue())),
   },
   {
     accessorKey: locale.value === 'ar' ? 'nameAr' : 'name',
     id: 'name',
     header: () => t('inv.itemName'),
-    cell: info => h('span', { class: 'font-semibold' }, info.getValue()),
+    cell: info => h('span', { class: 'font-semibold' }, String(info.getValue())),
   },
   {
     accessorKey: 'categoryId',
