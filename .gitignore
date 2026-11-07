@@ -34,3 +34,6 @@ upload/
 download/
 scripts/
 tool-results/
+
+# bun — المشروع يعتمد npm (package-lock.json)
+bun.lock
