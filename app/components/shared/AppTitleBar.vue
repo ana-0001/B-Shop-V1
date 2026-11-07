@@ -1,12 +1,15 @@
-<!-- shared/AppTitleBar.vue — شريط العنوان العلوي الموحد (العلامة + اللغة + الثيم + النافذة) -->
+<!-- shared/AppTitleBar.vue — شريط العنوان العلوي الموحد (العلامة + أفاتار المستخدم بعد الدخول + النافذة).
+     زرّا اللغة والثيم اتشالوا بقرار صاحب المشروع — بديلهم أفاتار المستخدم المنسدل،
+     وتبديل اللغة والثيم متاح من درج إعدادات شريط الحالة (SsbSettingsTrigger). -->
 <script setup lang="ts">
 import { useI18n } from '@/composables/useI18n'
 import AppLogo from '@/components/shared/AppLogo.vue'
-import LanguageToggle from '@/components/shared/LanguageToggle.vue'
-import ThemeToggle from '@/components/shared/ThemeToggle.vue'
+import UserMenu from '@/components/shared/UserMenu.vue'
 import WindowControls from '@/components/shared/WindowControls.vue'
+import { useAuthStore } from '@/stores/auth'
 
 const { t } = useI18n()
+const auth = useAuthStore()
 </script>
 
 <template>
@@ -18,8 +21,8 @@ const { t } = useI18n()
     </NuxtLink>
 
     <div class="titlebar-controls flex items-center gap-xs">
-      <LanguageToggle />
-      <ThemeToggle />
+      <!-- أفاتار المستخدم بدل زرّي اللغة والثيم — بيظهر بعد تسجيل الدخول فقط (الشاشات الداخلية) -->
+      <UserMenu v-if="auth.user" />
       <WindowControls />
     </div>
   </header>

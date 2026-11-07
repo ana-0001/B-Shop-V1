@@ -27,7 +27,7 @@ async function handleSignOut(): Promise<void> {
   <DropdownMenuRoot>
     <DropdownMenuTrigger
       class="h-7 px-sm flex items-center gap-xs rounded border border-border bg-surface hover:bg-hover text-xs font-bold text-bg-f transition-colors"
-      aria-label="User menu"
+      :aria-label="t('user.menuAria')"
     >
       <span class="w-5 h-5 rounded-full bg-primary text-primary-f grid place-items-center text-xs font-extrabold">
         {{ auth.user?.avatarLetter ?? 'B' }}

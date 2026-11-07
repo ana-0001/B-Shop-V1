@@ -89,6 +89,7 @@
   "util.searchPlaceholder": "بحث عام (رقم فاتورة، عميل، باركود، صنف)...",
   "util.signOut": "تسجيل الخروج",
   "util.profile": "الملف الشخصي",
+  "user.menuAria": "قائمة حساب المستخدم",
   "user.levelBadge": "المستوى {level}",
   "user.systemCreator": "صانع النظام",
   "dash.kicker": "نظرة عامة على نشاط المتجر",

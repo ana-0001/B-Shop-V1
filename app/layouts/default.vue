@@ -28,7 +28,6 @@ import Button from '@/components/ui/Button.vue'
 import Badge from '@/components/ui/Badge.vue'
 import Select from '@/components/ui/Select.vue'
 import GlobalSearch from '@/components/shared/GlobalSearch.vue'
-import UserMenu from '@/components/shared/UserMenu.vue'
 import HeldInvoicesDialog from '@/components/shared/HeldInvoicesDialog.vue'
 import ResetDbDialog from '@/components/shared/ResetDbDialog.vue'
 import SyncSkeleton from '@/components/shared/SyncSkeleton.vue'
@@ -218,8 +217,6 @@ onBeforeUnmount(() => window.removeEventListener('keydown', handleKeydown))
             <strong class="font-mono">{{ operationDate }}</strong>
           </span>
         </div>
-
-        <UserMenu />
       </div>
     </nav>
 
