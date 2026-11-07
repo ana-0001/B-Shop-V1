@@ -13,7 +13,7 @@ useHead({ title: 'B-Shop — Sign In' })
 </script>
 
 <template>
-  <section class="erp-card max-w-[28rem] w-full p-xl space-y-md shadow-xl">
+  <section class="erp-card bg-glass max-w-[28rem] w-full p-xl space-y-md shadow-xl">
     <header class="text-center space-y-xs">
       <div class="flex justify-center">
         <AppLogo size="lg" />

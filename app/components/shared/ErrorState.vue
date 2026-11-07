@@ -18,7 +18,7 @@ const isNotFound = computed(() => props.code === '404')
 </script>
 
 <template>
-  <article :class="['erp-card max-w-[32rem] w-full p-xl text-center space-y-md shadow-xl', !isNotFound && 'border-err']">
+  <article :class="['erp-card bg-glass max-w-[32rem] w-full p-xl text-center space-y-md shadow-xl', !isNotFound && 'border-err']">
     <div
       :class="[
         'w-16 h-16 mx-auto rounded-full bg-surface-alt border flex items-center justify-center text-3xl',

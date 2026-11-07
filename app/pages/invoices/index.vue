@@ -122,7 +122,7 @@ function handleClose(draft: InvoiceDraft): void {
     </div>
 
     <!-- هيكل تحميل لحظة تجهيز مساحة العمل -->
-    <div v-else class="erp-card space-y-sm">
+    <div v-else class="erp-card bg-glass space-y-sm">
       <Skeleton class="h-5 w-48" />
       <Skeleton class="h-32 w-full" />
       <Skeleton class="h-10 w-full" />

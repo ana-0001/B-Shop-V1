@@ -6,7 +6,7 @@ const props = defineProps<{ class?: string }>()
 </script>
 
 <template>
-  <article :class="cn('erp-card', props.class)">
+  <article :class="cn('erp-card bg-glass', props.class)">
     <slot />
   </article>
 </template>

@@ -72,7 +72,7 @@ const envLabel = computed(() => (import.meta.dev ? t('ssb.env.dev') : t('ssb.env
   <DrawerRoot v-model:open="settingsOpen" :swipe-direction="swipeDirection" :modal="true">
     <DrawerPortal>
       <RekaDrawerOverlay class="erp-modal-overlay" />
-      <RekaDrawerContent class="ssb-drawer-content" data-testid="ssb-drawer">
+      <RekaDrawerContent class="ssb-drawer-content bg-glass" data-testid="ssb-drawer">
         <!-- ترويسة الدرج -->
         <div class="ssb-drawer-header">
           <DrawerTitle class="ssb-drawer-title">

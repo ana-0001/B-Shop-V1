@@ -96,7 +96,7 @@ onBeforeUnmount(stopTimers)
 <template>
   <section class="flex-1 flex flex-col justify-between">
     <div class="flex-1 flex flex-col items-center justify-center p-md">
-      <div class="erp-card max-w-[32rem] w-full p-xl text-center space-y-lg shadow-xl">
+      <div class="erp-card bg-glass max-w-[32rem] w-full p-xl text-center space-y-lg shadow-xl">
         <div class="w-16 h-16 mx-auto rounded-xl bg-primary text-primary-f flex items-center justify-center text-2xl font-extrabold shadow-md">
           <IconCuboid class="w-8 h-8" />
         </div>

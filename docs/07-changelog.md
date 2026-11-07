@@ -2,6 +2,18 @@
 
 الصيغة مبنية على [Keep a Changelog](https://keepachangelog.com) والإصدارات SemVer.
 
+## [1.3.1] — 2026-11-07
+
+### تغيير — صنف الزجاجية الموحدة `.bg-glass` + فصل الخلفية عن أسطح النظام
+تنفيذ طلب صاحب المشروع: إنشاء كلاس `.bg-glass` ينفّذ تأثير الخلفية الزجاجية على العناصر، مع إلغاء لون الخلفية من `.ssb-drawer-content` و `.erp-card` وتركيب الكلاس الجديد بجوارهما على نفس العناصر.
+
+- `assets/css/main.css` — صنف جديد `.bg-glass`: لون زجاجي شبه شفاف من توكن `--color-glass` (بيتبع الثيم فاتح/غامق تلقائيًا) + `backdrop-filter: blur(0.75em) saturate(1.2)` بنفس قيمة ضباب `.ssb` في شريط الحالة (مع بادئة `-webkit-`). متصفح بلا دعم `backdrop-filter` ياخد سطحًا مصمتًا `--color-surface` عبر `@supports` عشان النص يفضل مقروء. الحدود والظلال والحشوات فضلت مسؤولية صنف السطح نفسه — فصل تام للمسؤوليات يخلّي التركيب آمن.
+- `assets/css/main.css` — إلغاء `background-color` من `.erp-card` (البطاقة الموحدة): الخلفية بقت جهة `.bg-glass` المركّب في القوالب.
+- `status-bar.css` — إلغاء `background-color: var(--ssb-bg)` من `.ssb-drawer-content` وحذف قاعدة `[data-theme="dark"] .ssb-drawer-content` اللي كانت بتعيد نفس الخلفية (بقت بلا معنى)؛ توكن `--ssb-bg` باقٍ لبقية مواضعه.
+- تركيب `bg-glass` بجوار الصنف الأصلي على **كل** العناصر المعنية (10 مواضع): `ui/Card.vue` و `dashboard/StatCard.vue` (يغطي كل بطاقات لوحة التحكم والتقارير والحسابات والمخزون عبر `cn()`) · صفحات الإقلاع `index.vue` وتسجيل الدخول `auth/sign-in.vue` والإعداد `onboarding.vue` · هياكل التحميل `SyncSkeleton.vue` و `invoices/index.vue` · شاشة الأخطاء `ErrorState.vue` · درج الإعدادات `SettingsDrawer.vue` (`ssb-drawer-content bg-glass`).
+- `terms.vue` و `.erp-glass-card` من دون تغيير — هو أصلًا سطح زجاجي مكتفٍ بذاته.
+- رفع `appVersion` إلى `1.3.1`.
+
 ## [1.3.0] — 2026-11-07
 
 ### إضافة — شريط الحالة في كل الشاشات + فحص متطلبات حقيقي للإقلاع مع مسار فشل مؤتمت

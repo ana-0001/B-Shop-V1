@@ -646,14 +646,11 @@
   inline-size: min(24em, 92vw);
   display: flex;
   flex-direction: column;
-  background-color: var(--ssb-bg);
+  /* الخلفية الزجاجية جاية من صنف .bg-glass العام المركّب جنب الصنف ده في القالب — مش من هنا */
   color: var(--ssb-fg);
   border-inline-start: 0.03em solid var(--ssb-br);
   box-shadow: var(--ssb-shadow-dark) -0.6em 0 2em;
   outline: none;
-}
-[data-theme="dark"] .ssb-drawer-content {
-  background-color: var(--ssb-bg);
 }
 .ssb-drawer-header {
   display: flex;

@@ -52,7 +52,7 @@ function previousStep(): void {
 </script>
 
 <template>
-  <section class="erp-card max-w-[40rem] w-full p-xl space-y-lg shadow-xl">
+  <section class="erp-card bg-glass max-w-[40rem] w-full p-xl space-y-lg shadow-xl">
     <OnboardingStepper :current="currentStep" :total="TOTAL_STEPS" />
 
     <!-- محتوى الخطوة الديناميكي -->

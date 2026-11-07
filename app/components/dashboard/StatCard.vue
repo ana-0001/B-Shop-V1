@@ -15,7 +15,7 @@ const props = defineProps<{
 </script>
 
 <template>
-  <article :class="cn('erp-card', props.class)">
+  <article :class="cn('erp-card bg-glass', props.class)">
     <div class="flex items-center justify-between text-xs font-bold text-muted-f">
       <span>{{ props.title }}</span>
       <span :class="cn('w-9 h-9 rounded bg-surface-alt flex items-center justify-center', props.iconClass)">

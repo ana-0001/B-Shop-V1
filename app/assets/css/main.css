@@ -275,8 +275,25 @@ body {
   color: hsl(0 0% 98%);
 }
 
+/* ─── الزجاجية الموحدة (.bg-glass) — صنف تأثير جاهز بيتتركب جنب أي سطح (erp-card / ssb-drawer-content ...):
+   لون زجاجي شبه شفاف من توكن --color-glass (بيتبع الثيم فاتح/غامق تلقائيًا)
+   + ضباب زجاجي backdrop-blur بنفس قيمة .ssb مع تشبع خفيف يحيّي الألوان اللي ورا الزجاج.
+   الحدود والظلال والحشوات بتفضل مسؤولية صنف السطح نفسه — فصل تام للمسؤوليات عشان الصنف يتترّكب بأمان. */
+.bg-glass {
+  background-color: var(--color-glass);
+  -webkit-backdrop-filter: blur(0.75em) saturate(1.2);
+  backdrop-filter: blur(0.75em) saturate(1.2);
+}
+
+/* متصفح من غير دعم backdrop-filter؟ ياخد لون سطح مصمت بدل الشفاف عشان النص يفضل مقروء */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .bg-glass {
+    background-color: var(--color-surface);
+  }
+}
+
 .erp-card {
-  background-color: var(--color-surface);
+  /* الخلفية الزجاجية جاية من صنف .bg-glass المركّب جنب الصنف ده في القوالب — مش من هنا */
   border: 0.0625em solid var(--color-br);
   border-radius: var(--border-radius-lg);
   padding: var(--spacing-md);
