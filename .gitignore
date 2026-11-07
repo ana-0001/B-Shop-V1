@@ -27,3 +27,10 @@ src-tauri/gen/schemas
 tool-results
 dev.log
 npm-install.log
+
+# مجلدات بيئة العمل المحلية (خارج نطاق المشروع)
+skills/
+upload/
+download/
+scripts/
+tool-results/
