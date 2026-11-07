@@ -1,8 +1,8 @@
-<!-- layouts/auth.vue — شل صفحات ما قبل الدخول (Splash / تسجيل الدخول / الشروط / الإعداد) -->
+<!-- layouts/auth.vue — شل صفحات ما قبل الدخول (Splash / تسجيل الدخول / الشروط / الإعداد).
+     شريط الحالة النظامي (SystemStatusBar) في الفوتر — ظاهر في كل الشاشات
+     بقرار صاحب المشروع (استبدل تذييل حالة الزائر القديم). -->
 <script setup lang="ts">
-import { useI18n } from '@/composables/useI18n'
-
-const { t } = useI18n()
+import SystemStatusBar from '@/components/system-status-bar/SystemStatusBar.vue'
 </script>
 
 <template>
@@ -11,14 +11,8 @@ const { t } = useI18n()
       <slot />
     </main>
 
-    <!-- تذييل حالة الزائر — زي ملف التصميم -->
-    <footer class="bg-bg border-t border-border px-md py-xs text-xs text-muted-f flex flex-wrap justify-between items-center gap-sm">
-      <span class="flex items-center gap-xs">
-        <span class="w-2 h-2 rounded-full bg-war" aria-hidden="true" />
-        <span>{{ t('splash.guestStatus') }}</span>
-        <span class="border-s border-border ps-md">{{ t('splash.dbMode') }}</span>
-      </span>
-      <span class="font-mono">{{ t('splash.fiscalBuild') }}</span>
-    </footer>
+    <!-- شريط الحالة النظامي (PRD): صحة النظام + الإصدار + البيئة + الساعة الحية
+         + الإشعارات + الإعدادات — بدون تكرار للهيدر -->
+    <SystemStatusBar />
   </div>
 </template>

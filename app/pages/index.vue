@@ -1,10 +1,14 @@
-<!-- pages/index.vue — شاشة الإقلاع (Splash) بخطوات الفحص الخمسة والتوجيه التلقائي -->
+<!-- pages/index.vue — شاشة الإقلاع (Splash) بفحص المتطلبات الخمسة الحقيقي والتوجيه الشرطي.
+     قرار صاحب المشروع: الدخول للشاشة التالية (تسجيل الدخول أو الرئيسية) بعد نجاح الفحص فقط،
+     وعند عدم التوافق → شاشة الأخطاء (503) مع إعادة محاولة أوتوماتيكية بفواصل + زر يدوي. -->
 <script setup lang="ts">
+import { createError, showError } from '#app'
 import { Cuboid as IconCuboid, RotateCcw as IconRotateCcw, ArrowRight as IconArrowRight } from 'lucide-vue-next'
 import { useI18n } from '@/composables/useI18n'
 import { useAuthStore } from '@/stores/auth'
 import { resolvePostAuthRoute } from '@/utils/auth-flow'
 import { ROUTE_NAMES } from '@/utils/constants'
+import { useBootChecks } from '@/components/splash/useBootChecks'
 import BootProgress from '@/components/splash/BootProgress.vue'
 import BootStepsList from '@/components/splash/BootStepsList.vue'
 import Badge from '@/components/ui/Badge.vue'
@@ -18,24 +22,26 @@ const router = useRouter()
 
 useHead({ title: 'B-Shop ERP' })
 
-/** مفاتيح خطوات الفحص الخمسة — زي ملف التصميم */
-const STEP_KEYS = ['splash.step1', 'splash.step2', 'splash.step3', 'splash.step4', 'splash.step5']
+const {
+  steps,
+  currentStepIndex,
+  percent,
+  currentStepLabel,
+  failedStep,
+  runChecks,
+} = useBootChecks()
 
-const stepIndex = ref(0)
-let bootTimer: ReturnType<typeof setInterval> | null = null
+/** تأخير بسيط بعد اكتمال الفحص قبل التوجيه — زي ملف التصميم */
+const REDIRECT_DELAY_MS = 450
+/** مهلة إظهار الخطوة الفاشلة قبل الانتقال لشاشة الأخطاء (حتى يراها المستخدم) */
+const FAIL_PAUSE_MS = 900
+
 let redirectTimer: ReturnType<typeof setTimeout> | null = null
-
-const percent = computed(() => Math.min(100, Math.round(((stepIndex.value + 1) / STEP_KEYS.length) * 100)))
-const currentStepLabel = computed(() => t(STEP_KEYS[Math.min(stepIndex.value, STEP_KEYS.length - 1)]))
-
-const progressProps = computed(() => ({
-  currentStepLabel: currentStepLabel.value,
-  percent: percent.value,
-}))
+let failTimer: ReturnType<typeof setTimeout> | null = null
 
 function stopTimers(): void {
-  if (bootTimer) { clearInterval(bootTimer); bootTimer = null }
   if (redirectTimer) { clearTimeout(redirectTimer); redirectTimer = null }
+  if (failTimer) { clearTimeout(failTimer); failTimer = null }
 }
 
 /** التوجيه حسب حالة الجلسة: دخول → شروط → إعداد → لوحة التحكم */
@@ -48,20 +54,39 @@ function continueToWorkspace(): void {
   router.push(resolvePostAuthRoute(auth.needsTerms, auth.needsOnboarding))
 }
 
-function startBootSequence(): void {
+/** الانتقال إلى شاشة الأخطاء بحالة فشل فحص المتطلبات (كود 503 + بيانات الفحص)
+     — شاشة الأخطاء فيها إعادة محاولة أوتوماتيكية بفواصل + زر إعادة يدوي */
+function failToErrorScreen(): void {
+  const failed = failedStep.value
+  showError(createError({
+    statusCode: 503,
+    statusMessage: 'B-Shop system requirements check failed',
+    fatal: true,
+    data: {
+      bootFailed: true,
+      failedKey: failed?.key ?? 'splash.step1',
+      detail: failed?.detail ?? '',
+    },
+  }))
+}
+
+/** تشغيل تسلسل الإقلاع: فحص فعلي → نجاح: توجيه تلقائي / فشل: شاشة الأخطاء */
+const isBooting = ref(false)
+
+async function startBootSequence(): Promise<void> {
+  if (isBooting.value) return // حماية من التشغيل المتزامن (نقر مكرر على إعادة الفحص)
+  isBooting.value = true
   stopTimers()
-  stepIndex.value = 0
-  bootTimer = setInterval(() => {
-    if (stepIndex.value < STEP_KEYS.length - 1) {
-      stepIndex.value += 1
-    } else {
-      stopTimers()
-      // تأخير بسيط بعد اكتمال الفحص ثم توجيه تلقائي — زي ملف التصميم
-      redirectTimer = setTimeout(() => {
-        continueToWorkspace()
-      }, 450)
+  try {
+    const passed = await runChecks()
+    if (passed) {
+      redirectTimer = setTimeout(continueToWorkspace, REDIRECT_DELAY_MS)
+      return
     }
-  }, 420)
+    failTimer = setTimeout(failToErrorScreen, FAIL_PAUSE_MS)
+  } finally {
+    isBooting.value = false
+  }
 }
 
 onMounted(startBootSequence)
@@ -82,9 +107,13 @@ onBeforeUnmount(stopTimers)
           <p class="text-xs text-muted-f mt-xs">{{ t('splash.subtitle') }}</p>
         </div>
 
-        <BootProgress v-bind="progressProps" />
+        <BootProgress :current-step-label="currentStepLabel" :percent="percent" />
 
-        <BootStepsList :steps="STEP_KEYS.map(key => t(key))" :current-index="stepIndex" />
+        <BootStepsList
+          :steps="steps.map(step => t(step.key))"
+          :states="steps.map(step => step.state)"
+          :current-index="currentStepIndex"
+        />
 
         <div class="flex items-center justify-center gap-sm pt-xs">
           <Button size="md" @click="startBootSequence">

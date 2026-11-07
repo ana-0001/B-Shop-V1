@@ -6,7 +6,7 @@ import Button from '@/components/ui/Button.vue'
 
 const props = withDefaults(
   defineProps<{
-    code: '404' | '500'
+    code: '404' | '500' | '503'
     diagnostic?: string
   }>(),
   { diagnostic: '' },
